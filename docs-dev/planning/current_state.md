@@ -25,7 +25,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 003 (`003_deploy_command.md`).
+Prompt 004 (`004_page_shell.md`).
 
 ## Prompts run
 
@@ -33,3 +33,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 
 - `001_setup.md`
 - `002_website_deploy_workflow.md` (eelkedevries.com commit `916e040`; *Render & Deploy* green)
+- `003_deploy_command.md`
