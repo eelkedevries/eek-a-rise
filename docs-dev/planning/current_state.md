@@ -52,6 +52,14 @@ This file records what *is* (current reality). The binding design canon is `docs
   loop, measured refresh rate, plot and summary of the measurements). The
   default sequence builds in about 7 s in Node and 9 s in headless Chromium.
   Property tests in `tests/core/sequence.test.ts`.
+- Downloads (010): `src/export/params.ts` (`parameters.json`, `frame_stats.csv`,
+  `README.txt`), `src/export/zip.ts` (fast-png 8.0.0 and fflate 0.8.3, made in
+  the worker with the frames lent and returned), `src/export/video.ts`
+  (Mediabunny 1.61.3: H.264 MP4 or VP9 WebM, 8 Mbit/s, key frame every second,
+  timestamps snapped to n / fps, grey mapped to the video range 16–235), and
+  `src/ui/downloads.ts`. `tests/core/export.test.ts` decodes a ZIP back to the
+  built frames; `tools/reference/verify_export.py` checks a ZIP independently in
+  Python; `scripts/verify-export.sh` checks a video with ffprobe.
 
 ## Key decisions
 
@@ -61,7 +69,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 010 (`010_downloads.md`).
+Prompt 011 (`011_how_it_works.md`).
 
 ## Prompts run
 
@@ -76,3 +84,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `007_one_image_mode.md`
 - `008_trial_setup.md`
 - `009_trial_render_player.md`
+- `010_downloads.md`

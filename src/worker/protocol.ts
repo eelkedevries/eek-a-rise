@@ -1,5 +1,6 @@
 /** Messages between the page and the worker. */
 import type { BuildOptions, BuiltSequence } from '../core/build';
+import type { ExportInfo } from '../export/params';
 
 export type OneImageMethod = 'circular' | 'sign' | 'plain';
 
@@ -25,9 +26,16 @@ export type Request =
   | { id: number; type: 'prepare'; image: Float64Array; size: number; seed: number; method: OneImageMethod }
   | { id: number; type: 'frame'; a: number }
   | { id: number; type: 'cycle'; n: number }
-  | { id: number; type: 'build'; options: BuildOptions };
+  | { id: number; type: 'build'; options: BuildOptions }
+  | { id: number; type: 'zip'; info: ExportInfo };
 
-export type Result = SourceStats | FrameResult | FrameResult[] | BuiltSequence;
+/** The ZIP and, handed back, the frames that were lent to the worker to make it. */
+export interface ZipResult {
+  zip: Uint8Array;
+  frames: Uint8Array;
+}
+
+export type Result = SourceStats | FrameResult | FrameResult[] | BuiltSequence | ZipResult;
 
 export type Response =
   | { id: number; ok: true; result: Result }

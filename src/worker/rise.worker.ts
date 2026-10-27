@@ -1,6 +1,7 @@
 /// <reference lib="webworker" />
 /** All spectral work runs here; the page only draws. */
 import { buildSequence } from '../core/build';
+import { makeZip } from '../export/zip';
 import { Prng } from '../core/prng';
 import { noisePhase, plainTarget, riseFrame, targets } from '../core/rise';
 import { spectrum } from '../core/spectrum';
@@ -55,6 +56,11 @@ function handle(request: Request): [Result, Transferable[]] {
       });
       const { stats } = built;
       return [built, [built.frames.buffer, stats.mean.buffer, stats.rms.buffer, stats.similarity.buffer, stats.clipped.buffer]];
+    }
+    case 'zip': {
+      const zip = makeZip(request.info, (done, total) => self.postMessage({ id: request.id, progress: done, total } satisfies Response));
+      const frames = request.info.built.frames;
+      return [{ zip, frames }, [zip.buffer, frames.buffer]];
     }
     case 'cycle': {
       const results: FrameResult[] = [];

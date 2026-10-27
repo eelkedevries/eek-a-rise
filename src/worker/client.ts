@@ -1,6 +1,7 @@
 /** Typed promise interface to the RISE worker. */
 import type { BuildOptions, BuiltSequence } from '../core/build';
-import type { FrameResult, OneImageMethod, Request, Response, SourceStats } from './protocol';
+import type { ExportInfo } from '../export/params';
+import type { FrameResult, OneImageMethod, Request, Response, SourceStats, ZipResult } from './protocol';
 
 type Pending = { resolve: (value: never) => void; reject: (error: Error) => void; progress?: (done: number, total: number) => void };
 type WithoutId<T> = T extends unknown ? Omit<T, 'id'> : never;
@@ -62,6 +63,14 @@ export class RiseWorker {
 
   cycle(n: number): Promise<FrameResult[]> {
     return this.call({ type: 'cycle', n });
+  }
+
+  /**
+   * Makes the PNG ZIP. The frames are lent to the worker (transferred, not copied)
+   * and come back with the result; until then info.built.frames is empty.
+   */
+  zip(info: ExportInfo, progress: (done: number, total: number) => void): Promise<ZipResult> {
+    return this.call({ type: 'zip', info }, [info.built.frames.buffer], progress);
   }
 
   /** Renders a whole sequence; the prepared images are transferred, so the caller passes copies it can spare. */

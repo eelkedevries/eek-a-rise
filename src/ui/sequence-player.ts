@@ -80,7 +80,8 @@ export function mountSequencePlayer(root: HTMLElement, setup: SequenceSetup): Se
     const { built, settings } = current;
     frame = Math.max(0, Math.min(built.rows.length - 1, n));
     const size = built.size;
-    drawGrey(canvas, built.frames, size, frame * size * size);
+    // While the ZIP is being made the frames are lent to the worker.
+    if (built.frames.length > 0) drawGrey(canvas, built.frames, size, frame * size * size);
     scrub.value = String(frame);
     const row = built.rows[frame];
     const image = row.image >= 0 ? current.imageNames[row.image] : '–';

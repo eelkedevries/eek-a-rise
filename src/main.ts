@@ -7,6 +7,7 @@ import '@fontsource/jetbrains-mono/latin-400.css';
 import './style.css';
 
 import { acceptDrops, ImageInputError } from './image-input';
+import { mountDownloads } from './ui/downloads';
 import { addUpload, allItems, loadExamples, type ImageItem } from './state';
 import { mountGallery, type Gallery } from './ui/gallery';
 import { mountOneImage } from './ui/one-image';
@@ -29,7 +30,8 @@ function status(message: string, error = false): void {
 
 const oneImage = mountOneImage(panels.one, status);
 const setup = mountSequenceSetup(panels.sequence);
-mountSequencePlayer(panels.sequence, setup);
+const player = mountSequencePlayer(panels.sequence, setup);
+mountDownloads(document.querySelector('#seq-downloads')!, player);
 
 const galleries: Record<'one' | 'sequence', Gallery> = {
   one: mountGallery(document.querySelector('#gallery-one')!, {
