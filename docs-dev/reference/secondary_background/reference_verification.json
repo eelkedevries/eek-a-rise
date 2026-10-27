@@ -1,0 +1,75 @@
+{
+  "similarity_to_source_by_weight": {
+    "weight": [
+      0.0,
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "sadr_sinha": [
+      -0.102,
+      -0.121,
+      -0.149,
+      -0.171,
+      -0.152,
+      -0.055,
+      0.14,
+      0.411,
+      0.697,
+      0.917,
+      1.0
+    ],
+    "plain": [
+      -0.102,
+      -0.088,
+      -0.034,
+      0.064,
+      0.202,
+      0.371,
+      0.553,
+      0.727,
+      0.871,
+      0.967,
+      1.0
+    ]
+  },
+  "demo_trial": {
+    "tag_frequency_hz": {
+      "eyes": 1.996,
+      "mouth": 1.329
+    },
+    "visibility_proxy_at_minima_max": 0.084,
+    "whole_image_mean_range": [
+      0.629513,
+      0.629513
+    ],
+    "whole_image_sd_range": [
+      0.082922,
+      0.082922
+    ],
+    "largest_step_at_joins_vs_median_step": [
+      0.0162,
+      0.0183
+    ],
+    "share_of_cycle_visible_above_half_peak": {
+      "eyes": 0.348,
+      "mouth": 0.267
+    },
+    "band_contrast_modulation_at_tag_pct": {
+      "eyes": 9.53,
+      "mouth": 7.13
+    },
+    "band_mean_modulation_at_tag_pct": {
+      "eyes": 0.3,
+      "mouth": 1.67
+    },
+    "pixels_outside_0_1": 4.8680555555555554e-05
+  }
+}

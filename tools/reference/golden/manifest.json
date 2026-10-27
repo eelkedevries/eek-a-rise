@@ -1,0 +1,286 @@
+{
+  "format": "little-endian, row-major; uniform = uint32 / 2**32",
+  "cases": [
+    {
+      "name": "fft_400",
+      "description": "fft2 of a uint8 image (400, 400); numpy.fft.fft2 convention (no scaling forward)",
+      "tolerance": {
+        "max_abs_over_max_abs": 1e-06
+      },
+      "files": {
+        "input": {
+          "file": "fft_400_in.uint8",
+          "dtype": "uint8",
+          "shape": [
+            400,
+            400
+          ]
+        },
+        "re": {
+          "file": "fft_400_re.float32",
+          "dtype": "float32",
+          "shape": [
+            400,
+            400
+          ]
+        },
+        "im": {
+          "file": "fft_400_im.float32",
+          "dtype": "float32",
+          "shape": [
+            400,
+            400
+          ]
+        }
+      }
+    },
+    {
+      "name": "fft_45x60",
+      "description": "fft2 of a uint8 image (45, 60); numpy.fft.fft2 convention (no scaling forward)",
+      "tolerance": {
+        "max_abs_over_max_abs": 1e-10
+      },
+      "files": {
+        "input": {
+          "file": "fft_45x60_in.uint8",
+          "dtype": "uint8",
+          "shape": [
+            45,
+            60
+          ]
+        },
+        "re": {
+          "file": "fft_45x60_re.float64",
+          "dtype": "float64",
+          "shape": [
+            45,
+            60
+          ]
+        },
+        "im": {
+          "file": "fft_45x60_im.float64",
+          "dtype": "float64",
+          "shape": [
+            45,
+            60
+          ]
+        }
+      }
+    },
+    {
+      "name": "fft_13x17",
+      "description": "fft2 of a uint8 image (13, 17); numpy.fft.fft2 convention (no scaling forward)",
+      "tolerance": {
+        "max_abs_over_max_abs": 1e-10
+      },
+      "files": {
+        "input": {
+          "file": "fft_13x17_in.uint8",
+          "dtype": "uint8",
+          "shape": [
+            13,
+            17
+          ]
+        },
+        "re": {
+          "file": "fft_13x17_re.float64",
+          "dtype": "float64",
+          "shape": [
+            13,
+            17
+          ]
+        },
+        "im": {
+          "file": "fft_13x17_im.float64",
+          "dtype": "float64",
+          "shape": [
+            13,
+            17
+          ]
+        }
+      }
+    },
+    {
+      "name": "rise_200",
+      "description": "spectrum -> noise_phase(u) -> rise_target(src, R, r) -> rise_frame at weights [0.0, 0.25, 0.5, 0.75, 1.0]; plus the naive target (r = 1 everywhere) at 0.5",
+      "tolerance": {
+        "max_abs": 1e-09
+      },
+      "files": {
+        "input": {
+          "file": "rise_200_in.uint8",
+          "dtype": "uint8",
+          "shape": [
+            200,
+            200
+          ]
+        },
+        "u": {
+          "file": "rise_200_u.uint32",
+          "dtype": "uint32",
+          "shape": [
+            200,
+            200
+          ]
+        },
+        "r": {
+          "file": "rise_200_r.uint32",
+          "dtype": "uint32",
+          "shape": [
+            200,
+            200
+          ]
+        },
+        "weights": {
+          "values": [
+            0.0,
+            0.25,
+            0.5,
+            0.75,
+            1.0
+          ]
+        },
+        "frames": {
+          "file": "rise_200_frames.float64",
+          "dtype": "float64",
+          "shape": [
+            5,
+            200,
+            200
+          ]
+        },
+        "naive_frame_0p5": {
+          "file": "rise_200_naive_0p5.float64",
+          "dtype": "float64",
+          "shape": [
+            200,
+            200
+          ]
+        },
+        "amplitude": {
+          "file": "rise_200_amp.float64",
+          "dtype": "float64",
+          "shape": [
+            200,
+            200
+          ]
+        }
+      }
+    },
+    {
+      "name": "spec_match_64",
+      "description": "spec_match of three uint8 images: set-average amplitude, own phase",
+      "tolerance": {
+        "max_abs": 1e-09
+      },
+      "files": {
+        "inputs": {
+          "file": "spec_match_64_in.uint8",
+          "dtype": "uint8",
+          "shape": [
+            3,
+            64,
+            64
+          ]
+        },
+        "outputs": {
+          "file": "spec_match_64_out.float64",
+          "dtype": "float64",
+          "shape": [
+            3,
+            64,
+            64
+          ]
+        },
+        "amplitude": {
+          "file": "spec_match_64_amp.float64",
+          "dtype": "float64",
+          "shape": [
+            64,
+            64
+          ]
+        }
+      }
+    },
+    {
+      "name": "noise_and_mask_64",
+      "description": "noise_path(R0, rise_target(R0, R1, r), w) for w in [0, 0.5, 1]; mask frames R0 + j * step for j = 0..10 with step = antisymmetric(sign(noise_phase(us)) * 2*pi/10); frame 10 equals frame 0",
+      "tolerance": {
+        "max_abs": 1e-09
+      },
+      "files": {
+        "amplitude": {
+          "file": "noise_and_mask_64_amp.float64",
+          "dtype": "float64",
+          "shape": [
+            64,
+            64
+          ]
+        },
+        "u0": {
+          "file": "noise_and_mask_64_u0.uint32",
+          "dtype": "uint32",
+          "shape": [
+            64,
+            64
+          ]
+        },
+        "u1": {
+          "file": "noise_and_mask_64_u1.uint32",
+          "dtype": "uint32",
+          "shape": [
+            64,
+            64
+          ]
+        },
+        "r": {
+          "file": "noise_and_mask_64_r.uint32",
+          "dtype": "uint32",
+          "shape": [
+            64,
+            64
+          ]
+        },
+        "us": {
+          "file": "noise_and_mask_64_us.uint32",
+          "dtype": "uint32",
+          "shape": [
+            64,
+            64
+          ]
+        },
+        "path": {
+          "file": "noise_and_mask_64_path.float64",
+          "dtype": "float64",
+          "shape": [
+            3,
+            64,
+            64
+          ]
+        },
+        "mask": {
+          "file": "noise_and_mask_64_mask.float64",
+          "dtype": "float64",
+          "shape": [
+            11,
+            64,
+            64
+          ]
+        }
+      }
+    },
+    {
+      "name": "schedule_default",
+      "description": "rise_reference.schedule() with the paper's defaults at 60 frames/s",
+      "tolerance": {
+        "weights_max_abs": 1e-12,
+        "other_columns": "exact"
+      },
+      "files": {
+        "csv": {
+          "file": "schedule_default.csv"
+        }
+      }
+    }
+  ]
+}
