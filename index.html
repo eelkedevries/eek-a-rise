@@ -4,12 +4,67 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>eek-a-rise</title>
+    <meta
+      name="description"
+      content="Images that emerge from noise while their overall brightness and contrast stay the same: RISE stimuli and frequency-tagged sequences, made in your browser."
+    />
+    <meta name="theme-color" content="#0a0a0f" />
   </head>
   <body>
-    <main id="app">
-      <h1>eek-a-rise</h1>
-      <p>Coming soon</p>
-    </main>
+    <div class="page">
+      <header class="site-header">
+        <h1>eek-a-rise</h1>
+        <p class="lede">Faces that emerge from noise, while overall brightness and contrast stay the same.</p>
+        <nav class="topnav" aria-label="Sections">
+          <a href="#try">Try it</a>
+          <a href="#how">How it works</a>
+          <a href="#about">About</a>
+        </nav>
+      </header>
+
+      <main>
+        <section id="try" class="drop-zone" aria-labelledby="try-heading">
+          <h2 id="try-heading">Try it</h2>
+          <div class="tabs" role="tablist" aria-label="Modes">
+            <button type="button" class="tab" role="tab" id="tab-one" aria-controls="panel-one" aria-selected="true">One image</button>
+            <button type="button" class="tab" role="tab" id="tab-sequence" aria-controls="panel-sequence" aria-selected="false" tabindex="-1">Sequence</button>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-one" aria-labelledby="tab-one">
+            <p class="muted">Arrives in a later version.</p>
+            <div class="upload-row">
+              <button type="button" class="button button-primary upload-button">Use your own image</button>
+              <span class="muted">or drop an image here. It stays on this device.</span>
+            </div>
+            <p class="status" role="status" aria-live="polite"></p>
+            <div class="gallery" id="gallery-one"></div>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-sequence" aria-labelledby="tab-sequence" hidden>
+            <p class="muted">Arrives in a later version.</p>
+            <div class="upload-row">
+              <button type="button" class="button button-primary upload-button">Use your own image</button>
+              <span class="muted">or drop an image here. It stays on this device.</span>
+            </div>
+            <p class="status" role="status" aria-live="polite"></p>
+            <div class="gallery" id="gallery-sequence"></div>
+          </div>
+          <input type="file" id="upload-input" accept="image/*" hidden />
+        </section>
+
+        <section id="how" aria-labelledby="how-heading">
+          <h2 id="how-heading">How it works</h2>
+        </section>
+
+        <section id="about" aria-labelledby="about-heading">
+          <h2 id="about-heading">About</h2>
+          <div class="prose">
+            <p>Everything happens in your browser. Your images are not uploaded, stored or sent anywhere.</p>
+            <p>The source code is on <a href="https://github.com/eelkedevries/eek-a-rise">GitHub</a>.</p>
+          </div>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

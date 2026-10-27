@@ -1,0 +1,345 @@
+:root {
+  --bg: #0a0a0f;
+  --chrome: #0d0d13;
+  --surface: #15151c;
+  --surface-2: #1f1f28;
+  --stage: #1c1c22;
+  --border: #2a2a35;
+  --text: #eae7e1;
+  --text-bright: #f4f1ea;
+  --muted: #9a9aa4;
+  --text-soft: #b9b9c2;
+  --gold: #e8b43a;
+  --iris: #6ba6e4;
+  --link: #7fb4ec;
+  --link-hover: #a9cdf5;
+  --warn: #f0a35e;
+
+  --font-body: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Spectral', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius: 12px;
+  --gutter: 16px;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The faint glows of eelkedevries.com, kept behind the content. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 560px at 80% -10%, rgba(232, 180, 58, 0.07), transparent 62%),
+    radial-gradient(820px 480px at 70% 0%, rgba(107, 166, 228, 0.05), transparent 58%),
+    radial-gradient(900px 700px at 12% 108%, rgba(107, 166, 228, 0.04), transparent 60%);
+}
+
+::selection {
+  background: var(--gold);
+  color: #0a0a0a;
+}
+
+a {
+  color: var(--link);
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-bright);
+  line-height: 1.25;
+}
+
+code,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--gutter) 64px;
+}
+
+.site-header {
+  padding: 40px 0 8px;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+}
+
+.lede {
+  margin: 6px 0 0;
+  max-width: 60ch;
+  color: var(--text-soft);
+  font-size: 1.1rem;
+}
+
+.topnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 18px 0 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.topnav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.topnav a:hover {
+  color: var(--text);
+}
+
+.page > section {
+  margin-top: 48px;
+  scroll-margin-top: 16px;
+}
+
+.page > section > h2 {
+  margin: 0 0 16px;
+  font-size: 1.7rem;
+}
+
+.prose {
+  max-width: 70ch;
+}
+
+.section-label {
+  margin: 0 0 10px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.panel {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* ---------------------------------------------------------------- controls */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  border-color: rgba(232, 180, 58, 0.5);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button-primary {
+  border-color: rgba(232, 180, 58, 0.55);
+  background: rgba(232, 180, 58, 0.12);
+  color: var(--text-bright);
+}
+
+.button-small {
+  min-height: 32px;
+  padding: 4px 12px;
+  font-size: 0.9rem;
+}
+
+.status {
+  min-height: 1.6em;
+  margin: 8px 0 0;
+  color: var(--text-soft);
+}
+
+.status.error {
+  color: var(--warn);
+}
+
+.warning {
+  color: var(--warn);
+}
+
+/* ---------------------------------------------------------------- tabs */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.tab[aria-selected='true'] {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text-bright);
+}
+
+.tab-panel {
+  padding: 20px 0 0;
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- upload and gallery */
+
+.upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.drop-zone {
+  outline: 2px dashed transparent;
+  outline-offset: 6px;
+  border-radius: var(--radius);
+  transition: outline-color 0.15s;
+}
+
+.drop-zone.dragging {
+  outline-color: var(--gold);
+}
+
+.gallery {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.gallery-group h3 {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.gallery-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--surface-2);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb:hover {
+  border-color: rgba(232, 180, 58, 0.4);
+}
+
+.thumb[aria-pressed='true'] {
+  border-color: var(--gold);
+}
+
+@media (max-width: 599px) {
+  .thumb {
+    width: 60px;
+    height: 60px;
+  }
+}

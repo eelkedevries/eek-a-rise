@@ -16,6 +16,13 @@ This file records what *is* (current reality). The binding design canon is `docs
   trial. The reference gained `Sequence`, the circular RISE target (now the
   default; the sign rule of 0.1 brightens and darkens the corners) and golden
   cases `rise_circular_200` and `sequence_64`.
+- Deploy: `npm run deploy` starts `deploy-eek-a-rise.yml` in eelkedevries.com
+  (prompts 002–003); the page is live at <https://eelkedevries.com/eek-a-rise/>.
+- Page shell (004): site look and self-hosted fonts (`src/style.css`), tabs
+  *One image* and *Sequence*, local upload and drag-and-drop
+  (`src/image-input.ts`), image list (`src/state.ts`), gallery
+  (`src/ui/gallery.ts`) with the 15 faces (`public/examples/`) and two
+  procedural chessboards (`src/examples/chessboards.ts`).
 
 ## Key decisions
 
@@ -25,7 +32,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 004 (`004_page_shell.md`).
+Prompt 005 (`005_fft_core.md`).
 
 ## Prompts run
 
@@ -34,3 +41,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `001_setup.md`
 - `002_website_deploy_workflow.md` (eelkedevries.com commit `916e040`; *Render & Deploy* green)
 - `003_deploy_command.md`
+- `004_page_shell.md`

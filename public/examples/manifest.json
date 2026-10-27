@@ -1,0 +1,107 @@
+[
+  {
+    "file": "ida_eyes_squeezed.png",
+    "identity": "ida",
+    "band": "eyes",
+    "expression": "squeezed",
+    "label": "Ida, eyes squeezed shut"
+  },
+  {
+    "file": "ida_eyes_wide.png",
+    "identity": "ida",
+    "band": "eyes",
+    "expression": "wide",
+    "label": "Ida, eyes wide open"
+  },
+  {
+    "file": "ida_eyes_closed.png",
+    "identity": "ida",
+    "band": "eyes",
+    "expression": "closed",
+    "label": "Ida, eyes closed"
+  },
+  {
+    "file": "ida_mouth_smile.png",
+    "identity": "ida",
+    "band": "mouth",
+    "expression": "smile",
+    "label": "Ida, smiling"
+  },
+  {
+    "file": "ida_mouth_smile-teeth.png",
+    "identity": "ida",
+    "band": "mouth",
+    "expression": "smile-teeth",
+    "label": "Ida, smiling with teeth"
+  },
+  {
+    "file": "ben_eyes_left-closed.png",
+    "identity": "ben",
+    "band": "eyes",
+    "expression": "left-closed",
+    "label": "Ben, left eye closed"
+  },
+  {
+    "file": "ben_eyes_squeezed.png",
+    "identity": "ben",
+    "band": "eyes",
+    "expression": "squeezed",
+    "label": "Ben, eyes squeezed shut"
+  },
+  {
+    "file": "ben_eyes_look-right.png",
+    "identity": "ben",
+    "band": "eyes",
+    "expression": "look-right",
+    "label": "Ben, looking right"
+  },
+  {
+    "file": "ben_mouth_neutral.png",
+    "identity": "ben",
+    "band": "mouth",
+    "expression": "neutral",
+    "label": "Ben, neutral mouth"
+  },
+  {
+    "file": "ben_mouth_smile.png",
+    "identity": "ben",
+    "band": "mouth",
+    "expression": "smile",
+    "label": "Ben, smiling"
+  },
+  {
+    "file": "cas_eyes_right-closed.png",
+    "identity": "cas",
+    "band": "eyes",
+    "expression": "right-closed",
+    "label": "Cas, right eye closed"
+  },
+  {
+    "file": "cas_eyes_closed.png",
+    "identity": "cas",
+    "band": "eyes",
+    "expression": "closed",
+    "label": "Cas, eyes closed"
+  },
+  {
+    "file": "cas_eyes_look-left.png",
+    "identity": "cas",
+    "band": "eyes",
+    "expression": "look-left",
+    "label": "Cas, looking left"
+  },
+  {
+    "file": "cas_mouth_tongue.png",
+    "identity": "cas",
+    "band": "mouth",
+    "expression": "tongue",
+    "label": "Cas, tongue out"
+  },
+  {
+    "file": "cas_mouth_smile-teeth.png",
+    "identity": "cas",
+    "band": "mouth",
+    "expression": "smile-teeth",
+    "label": "Cas, smiling with teeth"
+  }
+]
