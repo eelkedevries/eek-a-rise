@@ -7,8 +7,9 @@ import '@fontsource/jetbrains-mono/latin-400.css';
 import './style.css';
 
 import { acceptDrops, ImageInputError } from './image-input';
-import { addUpload, loadExamples, type ImageItem } from './state';
+import { addUpload, allItems, loadExamples, type ImageItem } from './state';
 import { mountGallery, type Gallery } from './ui/gallery';
+import { mountOneImage } from './ui/one-image';
 import { mountTabs } from './ui/tabs';
 
 const uploadInput = document.querySelector<HTMLInputElement>('#upload-input')!;
@@ -24,10 +25,15 @@ function status(message: string, error = false): void {
   line.classList.toggle('error', error);
 }
 
+const oneImage = mountOneImage(panels.one, status);
+
 const galleries: Record<'one' | 'sequence', Gallery> = {
   one: mountGallery(document.querySelector('#gallery-one')!, {
     includeChessboards: true,
-    onSelect: (item: ImageItem) => status(`Selected: ${item.label}.`),
+    onSelect: (item: ImageItem) => {
+      status('');
+      void oneImage.show(item);
+    },
   }),
   sequence: mountGallery(document.querySelector('#gallery-sequence')!, {
     includeChessboards: false,
@@ -42,6 +48,7 @@ async function upload(file: File): Promise<void> {
     const gallery = activePanel === panels.one ? galleries.one : galleries.sequence;
     gallery.select(item.id);
     status(`Added ${item.label}.`);
+    if (activePanel === panels.one) await oneImage.show(item);
   } catch (error) {
     status(error instanceof ImageInputError ? error.message : 'Something went wrong while opening that image.', true);
   }
@@ -60,4 +67,11 @@ uploadInput.addEventListener('change', () => {
 });
 acceptDrops(document.querySelector('#try')!, (file) => void upload(file));
 
-loadExamples().catch(() => status('The examples could not be loaded.', true));
+loadExamples()
+  .then(() => {
+    const first = allItems().find((item) => item.id === 'ida_eyes_wide') ?? allItems()[0];
+    if (!first) return;
+    galleries.one.select(first.id);
+    void oneImage.show(first);
+  })
+  .catch(() => status('The examples could not be loaded.', true));

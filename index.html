@@ -31,7 +31,45 @@
           </div>
 
           <div class="tab-panel" role="tabpanel" id="panel-one" aria-labelledby="tab-one">
-            <p class="muted">Arrives in a later version.</p>
+            <div class="workbench">
+              <figure class="stage-col">
+                <div class="stage">
+                  <canvas width="400" height="400" aria-label="The current frame"></canvas>
+                  <svg class="outline-overlay" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true" hidden><ellipse /></svg>
+                </div>
+                <figcaption class="stage-caption muted"></figcaption>
+              </figure>
+              <div class="controls">
+                <label class="control" for="one-weight">
+                  <span>Weight: noise (0) to image (1)</span>
+                  <span class="slider-row"><input type="range" id="one-weight" min="0" max="1" step="0.01" value="0.8" /><output id="one-weight-value" for="one-weight">0.80</output></span>
+                </label>
+                <div class="button-row">
+                  <button type="button" class="button" id="one-play" aria-pressed="false">Play</button>
+                  <button type="button" class="button" id="one-noise">New noise</button>
+                  <span class="muted">Seed <code id="one-seed"></code></span>
+                </div>
+                <fieldset class="control choice">
+                  <legend>Method</legend>
+                  <label><input type="radio" name="one-method" value="circular" checked /> RISE</label>
+                  <label><input type="radio" name="one-method" value="sign" /> Sign rule</label>
+                  <label><input type="radio" name="one-method" value="plain" /> Plain interpolation</label>
+                </fieldset>
+                <label class="control check"><input type="checkbox" id="one-outline" /> Outline: an ellipse on the mean grey</label>
+                <table class="readouts">
+                  <caption class="section-label">Whole image</caption>
+                  <thead>
+                    <tr><th scope="col"></th><th scope="col">Mean</th><th scope="col">RMS contrast</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th scope="row">Source</th><td data-readout="source-mean">–</td><td data-readout="source-rms">–</td></tr>
+                    <tr><th scope="row">This frame</th><td data-readout="frame-mean">–</td><td data-readout="frame-rms">–</td></tr>
+                    <tr><th scope="row">On screen (8-bit)</th><td data-readout="frame-mean8">–</td><td data-readout="frame-rms8">–</td></tr>
+                  </tbody>
+                </table>
+                <p class="muted small">Values from 0 (black) to 1 (white). Clipped by the display: <span data-readout="clipped">–</span></p>
+              </div>
+            </div>
             <div class="upload-row">
               <button type="button" class="button button-primary upload-button">Use your own image</button>
               <span class="muted">or drop an image here. It stays on this device.</span>

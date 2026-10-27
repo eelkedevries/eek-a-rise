@@ -34,6 +34,12 @@ This file records what *is* (current reality). The binding design canon is `docs
   `prng.ts` (sfc32 with random access to the arrays of a stream). Golden tests
   for every ported case, including the full `sequence_64`; invariant tests in
   `tests/core/`.
+- One image (007): `src/core/preprocess.ts` (grey, crop, resize, outline),
+  the worker (`src/worker/`: `rise.worker.ts`, typed `client.ts`, `protocol.ts`;
+  the page never runs an FFT), and `src/ui/one-image.ts` (slider, Play at one
+  cycle per second by elapsed time, New noise with the seed shown, method
+  *RISE* / *Sign rule* / *Plain interpolation*, outline, readouts of mean and RMS
+  contrast before and after the display mapping, clipped share).
 
 ## Key decisions
 
@@ -43,7 +49,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 007 (`007_one_image_mode.md`).
+Prompt 008 (`008_trial_setup.md`).
 
 ## Prompts run
 
@@ -55,3 +61,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `004_page_shell.md`
 - `005_fft_core.md`
 - `006_rise_core.md`
+- `007_one_image_mode.md`
