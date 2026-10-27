@@ -7,12 +7,14 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "check": "tsc --noEmit && vite build && bash scripts/check-public-build.sh dist && bash scripts/validate-prompts.sh",
+    "check": "tsc --noEmit && vitest run && vite build && bash scripts/check-public-build.sh dist && bash scripts/validate-prompts.sh",
     "deploy": "bash scripts/deploy.sh"
   },
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "typescript": "~6.0.3",
-    "vite": "^8.3.4"
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.3.0",

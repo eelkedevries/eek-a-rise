@@ -23,6 +23,9 @@ This file records what *is* (current reality). The binding design canon is `docs
   (`src/image-input.ts`), image list (`src/state.ts`), gallery
   (`src/ui/gallery.ts`) with the 15 faces (`public/examples/`) and two
   procedural chessboards (`src/examples/chessboards.ts`).
+- FFT (005): `src/core/fft.ts`, Stockham mixed radix (4, 2, 3, 5) and Bluestein,
+  checked against the golden data by Vitest in `npm run check`
+  (`tests/golden/`); 400 × 400 `fft2` + `ifft2` takes about 16 ms in Node.
 
 ## Key decisions
 
@@ -32,7 +35,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 005 (`005_fft_core.md`).
+Prompt 006 (`006_rise_core.md`).
 
 ## Prompts run
 
@@ -42,3 +45,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `002_website_deploy_workflow.md` (eelkedevries.com commit `916e040`; *Render & Deploy* green)
 - `003_deploy_command.md`
 - `004_page_shell.md`
+- `005_fft_core.md`
