@@ -1,3 +1,5 @@
+import { DEFAULT_ELLIPSE, type Ellipse } from './core/preprocess';
+import type { Method } from './core/rise';
 import { CHESSBOARD_SIZE, chessboard, chessboardOnGrey } from './examples/chessboards';
 import { decodeUpload } from './image-input';
 
@@ -118,4 +120,71 @@ export async function addUpload(file: File): Promise<ImageItem> {
   items.push(item);
   changed();
   return item;
+}
+
+// ---------------------------------------------------------------- sequence set-up
+
+export interface SequenceSettings {
+  size: number;
+  outline: boolean;
+  ellipse: Ellipse;
+  fps: number;
+  tagHz: number;
+  cyclesPerImage: number;
+  baselineS: number;
+  stimulusS: number;
+  postS: number;
+  peak: number;
+  method: Method;
+  normalise: boolean;
+  normMean: number;
+  normRms: number;
+  fixation: boolean;
+  seed: number;
+}
+
+/** The defaults of the specification (Defaults and their provenance). */
+export const DEFAULT_SETTINGS: SequenceSettings = {
+  size: 400,
+  outline: false,
+  ellipse: { ...DEFAULT_ELLIPSE },
+  fps: 60,
+  tagHz: 2,
+  cyclesPerImage: 1,
+  baselineS: 1,
+  stimulusS: 4.5,
+  postS: 0.5,
+  peak: 1,
+  method: 'circular',
+  normalise: false,
+  normMean: 0.5,
+  normRms: 0.12,
+  fixation: false,
+  seed: 1,
+};
+
+const STORAGE_KEY = 'eek-a-rise:sequence-settings';
+
+/** Parameters only; images are never stored. */
+export function loadSettings(): SequenceSettings {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw), ellipse: { ...DEFAULT_ELLIPSE, ...JSON.parse(raw).ellipse } };
+  } catch {
+    // Storage may be unavailable (private windows, blocked site data); the defaults apply.
+  }
+  return structuredClone(DEFAULT_SETTINGS);
+}
+
+export function saveSettings(settings: SequenceSettings): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+  } catch {
+    // Preferences are a convenience; nothing depends on them being kept.
+  }
+}
+
+/** The nine eye-expression faces in manifest order, as the published clip's eye band shows them. */
+export function demoSequenceIds(): string[] {
+  return items.filter((item) => item.kind === 'face' && item.band === 'eyes').map((item) => item.id);
 }

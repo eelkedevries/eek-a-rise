@@ -10,6 +10,7 @@ import { acceptDrops, ImageInputError } from './image-input';
 import { addUpload, allItems, loadExamples, type ImageItem } from './state';
 import { mountGallery, type Gallery } from './ui/gallery';
 import { mountOneImage } from './ui/one-image';
+import { mountSequenceSetup } from './ui/sequence-setup';
 import { mountTabs } from './ui/tabs';
 
 const uploadInput = document.querySelector<HTMLInputElement>('#upload-input')!;
@@ -26,6 +27,7 @@ function status(message: string, error = false): void {
 }
 
 const oneImage = mountOneImage(panels.one, status);
+const setup = mountSequenceSetup(panels.sequence);
 
 const galleries: Record<'one' | 'sequence', Gallery> = {
   one: mountGallery(document.querySelector('#gallery-one')!, {
@@ -37,7 +39,11 @@ const galleries: Record<'one' | 'sequence', Gallery> = {
   }),
   sequence: mountGallery(document.querySelector('#gallery-sequence')!, {
     includeChessboards: false,
-    onSelect: (item: ImageItem) => status(`Selected: ${item.label}.`),
+    onSelect: (item: ImageItem) => {
+      setup.add(item);
+      galleries.sequence.select(null);
+      status(`Added ${item.label} to the sequence.`);
+    },
   }),
 };
 
@@ -49,6 +55,11 @@ async function upload(file: File): Promise<void> {
     gallery.select(item.id);
     status(`Added ${item.label}.`);
     if (activePanel === panels.one) await oneImage.show(item);
+    else {
+      setup.add(item);
+      galleries.sequence.select(null);
+      status(`Added ${item.label} to the sequence.`);
+    }
   } catch (error) {
     status(error instanceof ImageInputError ? error.message : 'Something went wrong while opening that image.', true);
   }

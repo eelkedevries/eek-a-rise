@@ -79,13 +79,106 @@
           </div>
 
           <div class="tab-panel" role="tabpanel" id="panel-sequence" aria-labelledby="tab-sequence" hidden>
-            <p class="muted">Arrives in a later version.</p>
-            <div class="upload-row">
-              <button type="button" class="button button-primary upload-button">Use your own image</button>
-              <span class="muted">or drop an image here. It stays on this device.</span>
+            <p class="prose">
+              A sequence shows each image emerging from noise and dissolving into it once per cycle, at a fixed rate,
+              between a stretch of noise before and after. Overall brightness and contrast stay the same in every frame.
+            </p>
+
+            <div class="seq-grid">
+              <div class="panel">
+                <h3 class="section-label">1. Images, in order</h3>
+                <ol class="image-list" id="seq-list"></ol>
+                <div class="button-row">
+                  <button type="button" class="button button-small" id="seq-reset">Reset to demo set</button>
+                  <button type="button" class="button button-small" id="seq-clear">Remove all</button>
+                </div>
+                <p class="muted small">Add images by clicking them below, or use your own.</p>
+                <div class="upload-row">
+                  <button type="button" class="button button-primary upload-button">Use your own image</button>
+                  <span class="muted">or drop an image here. It stays on this device.</span>
+                </div>
+                <p class="status" role="status" aria-live="polite"></p>
+                <div class="gallery" id="gallery-sequence"></div>
+              </div>
+
+              <div class="panel">
+                <h3 class="section-label">2. Preparation</h3>
+                <div class="prep">
+                  <div class="stage prep-stage">
+                    <canvas id="seq-preview" width="400" height="400" aria-label="The selected image, prepared"></canvas>
+                    <svg class="outline-overlay" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true" hidden><ellipse /></svg>
+                  </div>
+                  <div class="controls">
+                    <label class="control">
+                      <span>Image size <span class="tag" data-tag="paper">paper</span></span>
+                      <select id="seq-size">
+                        <option value="256">256 × 256 px</option>
+                        <option value="400">400 × 400 px</option>
+                        <option value="512">512 × 512 px</option>
+                        <option value="600">600 × 600 px</option>
+                        <option value="800">800 × 800 px</option>
+                      </select>
+                    </label>
+                    <label class="control check"><input type="checkbox" id="seq-outline" /> Outline: an ellipse on the mean grey</label>
+                    <div class="ellipse-sliders" id="seq-ellipse">
+                      <label class="control"><span>Centre, across</span><input type="range" min="0.2" max="0.8" step="0.0025" data-key="cx" /></label>
+                      <label class="control"><span>Centre, down</span><input type="range" min="0.2" max="0.8" step="0.0025" data-key="cy" /></label>
+                      <label class="control"><span>Width</span><input type="range" min="0.1" max="0.5" step="0.0025" data-key="rx" /></label>
+                      <label class="control"><span>Height</span><input type="range" min="0.1" max="0.5" step="0.0025" data-key="ry" /></label>
+                      <button type="button" class="button button-small" id="seq-ellipse-reset">Default ellipse</button>
+                    </div>
+                    <p class="muted small" id="seq-preview-caption"></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h3 class="section-label">3. Timing and method</h3>
+                <form class="params" id="seq-params" novalidate>
+                  <label class="control"><span>Frame rate (frames per second) <span class="tag" data-tag="clip">clip</span></span>
+                    <input type="number" name="fps" min="30" max="240" step="1" /></label>
+                  <label class="control"><span>Tag frequency (Hz) <span class="tag" data-tag="paper">paper</span></span>
+                    <input type="number" name="tagHz" min="0.1" step="any" /><span class="hint" data-hint="period"></span></label>
+                  <label class="control"><span>Cycles per image <span class="tag" data-tag="paper">paper</span></span>
+                    <input type="number" name="cyclesPerImage" min="1" step="1" /></label>
+                  <label class="control"><span>Noise before (s) <span class="tag" data-tag="paper">paper</span></span>
+                    <input type="number" name="baselineS" min="0" step="any" /><span class="hint" data-hint="baseline"></span></label>
+                  <label class="control"><span>Images (s) <span class="tag" data-tag="paper">paper</span></span>
+                    <input type="number" name="stimulusS" min="0" step="any" /><span class="hint" data-hint="stimulus"></span></label>
+                  <label class="control"><span>Noise after (s) <span class="tag" data-tag="paper">paper</span></span>
+                    <input type="number" name="postS" min="0" step="any" /><span class="hint" data-hint="post"></span></label>
+                  <label class="control"><span>Peak weight (1 = the full image) <span class="tag" data-tag="assumption">assumption</span></span>
+                    <input type="number" name="peak" min="0.05" max="1" step="0.05" /></label>
+                  <label class="control"><span>Method <span class="tag" data-tag="project">this project</span></span>
+                    <select name="method"><option value="circular">RISE</option><option value="sign">Sign rule</option></select></label>
+                  <div class="control">
+                    <label class="check"><input type="checkbox" name="normalise" /> Set mean and RMS contrast <span class="tag" data-tag="assumption">assumption</span></label>
+                    <span class="inline-fields">
+                      <label>Mean <input type="number" name="normMean" min="0.05" max="0.95" step="0.01" /></label>
+                      <label>RMS contrast <input type="number" name="normRms" min="0.01" max="0.4" step="0.01" /></label>
+                    </span>
+                  </div>
+                  <label class="control check"><input type="checkbox" name="fixation" /> Fixation cross <span class="tag" data-tag="project">this project</span></label>
+                  <label class="control"><span>Seed</span>
+                    <span class="inline-fields"><input type="number" name="seed" min="0" max="4294967295" step="1" /><button type="button" class="button button-small" id="seq-new-seed">New seed</button></span></label>
+                </form>
+                <ul class="messages" id="seq-messages" aria-live="polite"></ul>
+                <p class="muted small" id="seq-summary"></p>
+                <div class="button-row">
+                  <button type="button" class="button button-small" id="seq-defaults">Defaults</button>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h3 class="section-label">4. Schedule</h3>
+                <canvas class="timeline" id="seq-timeline" height="90" aria-label="Schedule: segments, cycles and weights"></canvas>
+                <ul class="legend" id="seq-legend"></ul>
+                <div class="button-row">
+                  <button type="button" class="button button-primary" id="seq-build" disabled>Build</button>
+                  <span class="muted small" id="seq-build-note">Rendering arrives in the next version.</span>
+                </div>
+              </div>
             </div>
-            <p class="status" role="status" aria-live="polite"></p>
-            <div class="gallery" id="gallery-sequence"></div>
           </div>
           <input type="file" id="upload-input" accept="image/*" hidden />
         </section>

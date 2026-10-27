@@ -40,6 +40,11 @@ This file records what *is* (current reality). The binding design canon is `docs
   cycle per second by elapsed time, New noise with the seed shown, method
   *RISE* / *Sign rule* / *Plain interpolation*, outline, readouts of mean and RMS
   contrast before and after the display mapping, clipped share).
+- Sequence set-up (008): `src/ui/sequence-setup.ts` (ordered image list, the
+  demo set of nine faces, size and outline with a prepared preview, parameters
+  with provenance tags, inline validation from `src/core/plan.ts` and
+  `schedule.ts`, schedule timeline and legend); settings (not images) kept in
+  `localStorage` by `src/state.ts`.
 
 ## Key decisions
 
@@ -49,7 +54,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 008 (`008_trial_setup.md`).
+Prompt 009 (`009_trial_render_player.md`).
 
 ## Prompts run
 
@@ -62,3 +67,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `005_fft_core.md`
 - `006_rise_core.md`
 - `007_one_image_mode.md`
+- `008_trial_setup.md`
