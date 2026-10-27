@@ -732,3 +732,48 @@ a.tag {
   align-items: center;
   gap: 6px;
 }
+
+/* ---------------------------------------------------------------- build, player and plot */
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.progress-row[hidden],
+.result-panel[hidden] {
+  display: none;
+}
+
+progress {
+  flex: 1;
+  height: 10px;
+  accent-color: var(--gold);
+}
+
+.result-panel {
+  margin-top: 18px;
+}
+
+.result-panel h4 {
+  margin: 18px 0 8px;
+}
+
+.plot {
+  display: block;
+  width: 100%;
+  height: 260px;
+}
+
+#seq-scrub {
+  width: 100%;
+  accent-color: var(--gold);
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

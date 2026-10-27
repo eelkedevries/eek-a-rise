@@ -1,4 +1,5 @@
 /** Messages between the page and the worker. */
+import type { BuildOptions, BuiltSequence } from '../core/build';
 
 export type OneImageMethod = 'circular' | 'sign' | 'plain';
 
@@ -23,8 +24,12 @@ export interface FrameResult {
 export type Request =
   | { id: number; type: 'prepare'; image: Float64Array; size: number; seed: number; method: OneImageMethod }
   | { id: number; type: 'frame'; a: number }
-  | { id: number; type: 'cycle'; n: number };
+  | { id: number; type: 'cycle'; n: number }
+  | { id: number; type: 'build'; options: BuildOptions };
 
-export type Result = SourceStats | FrameResult | FrameResult[];
+export type Result = SourceStats | FrameResult | FrameResult[] | BuiltSequence;
 
-export type Response = { id: number; ok: true; result: Result } | { id: number; ok: false; error: string };
+export type Response =
+  | { id: number; ok: true; result: Result }
+  | { id: number; ok: false; error: string }
+  | { id: number; progress: number; total: number };

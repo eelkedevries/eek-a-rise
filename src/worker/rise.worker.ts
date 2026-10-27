@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 /** All spectral work runs here; the page only draws. */
+import { buildSequence } from '../core/build';
 import { Prng } from '../core/prng';
 import { noisePhase, plainTarget, riseFrame, targets } from '../core/rise';
 import { spectrum } from '../core/spectrum';
@@ -43,6 +44,17 @@ function handle(request: Request): [Result, Transferable[]] {
     case 'frame': {
       const result = frame(request.a);
       return [result, [result.pixels.buffer]];
+    }
+    case 'build': {
+      let last = 0;
+      const built = buildSequence(request.options, (done, total) => {
+        if (done - last >= 10 || done === total) {
+          last = done;
+          self.postMessage({ id: request.id, progress: done, total } satisfies Response);
+        }
+      });
+      const { stats } = built;
+      return [built, [built.frames.buffer, stats.mean.buffer, stats.rms.buffer, stats.similarity.buffer, stats.clipped.buffer]];
     }
     case 'cycle': {
       const results: FrameResult[] = [];

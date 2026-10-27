@@ -45,6 +45,13 @@ This file records what *is* (current reality). The binding design canon is `docs
   with provenance tags, inline validation from `src/core/plan.ts` and
   `schedule.ts`, schedule timeline and legend); settings (not images) kept in
   `localStorage` by `src/state.ts`.
+- Build and player (009): `src/core/build.ts` (8-bit frames, fixation cross and
+  per-frame mean, RMS contrast, similarity and clipped share; `peakFrequency`),
+  the worker's `build` message with progress and cancel (worker restart), and
+  `src/ui/sequence-player.ts` (player by elapsed time, frame step, scrubber,
+  loop, measured refresh rate, plot and summary of the measurements). The
+  default sequence builds in about 7 s in Node and 9 s in headless Chromium.
+  Property tests in `tests/core/sequence.test.ts`.
 
 ## Key decisions
 
@@ -54,7 +61,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 009 (`009_trial_render_player.md`).
+Prompt 010 (`010_downloads.md`).
 
 ## Prompts run
 
@@ -68,3 +75,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `006_rise_core.md`
 - `007_one_image_mode.md`
 - `008_trial_setup.md`
+- `009_trial_render_player.md`

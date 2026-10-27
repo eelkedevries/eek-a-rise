@@ -175,9 +175,40 @@
                 <ul class="legend" id="seq-legend"></ul>
                 <div class="button-row">
                   <button type="button" class="button button-primary" id="seq-build" disabled>Build</button>
-                  <span class="muted small" id="seq-build-note">Rendering arrives in the next version.</span>
+                  <button type="button" class="button" id="seq-cancel" hidden>Cancel</button>
+                  <span class="muted small" id="seq-build-note"></span>
+                </div>
+                <div class="progress-row" id="seq-progress-row" hidden>
+                  <progress id="seq-progress" max="1" value="0"></progress>
+                  <span class="muted small" id="seq-eta"></span>
                 </div>
               </div>
+            </div>
+
+            <div class="panel result-panel" id="seq-result" hidden>
+              <h3 class="section-label">5. The sequence</h3>
+              <div class="workbench">
+                <figure class="stage-col">
+                  <div class="stage"><canvas id="seq-canvas" width="400" height="400" aria-label="Sequence frame"></canvas></div>
+                  <figcaption class="small mono" id="seq-frame-info"></figcaption>
+                </figure>
+                <div class="controls">
+                  <div class="button-row">
+                    <button type="button" class="button" id="seq-play" aria-pressed="false">Play</button>
+                    <button type="button" class="button button-small" id="seq-back" aria-label="One frame back">− 1 frame</button>
+                    <button type="button" class="button button-small" id="seq-forward" aria-label="One frame forward">+ 1 frame</button>
+                    <label class="check"><input type="checkbox" id="seq-loop" checked /> Loop</label>
+                  </div>
+                  <label class="control"><span>Frame</span><input type="range" id="seq-scrub" min="0" max="0" step="1" value="0" /></label>
+                  <p class="small" id="seq-refresh"></p>
+                  <p class="muted small" id="seq-player-note"></p>
+                  <p class="small warning" id="seq-clip-warning" hidden></p>
+                </div>
+              </div>
+              <h4 class="section-label">Measured in every frame</h4>
+              <canvas class="plot" id="seq-plot" height="260" aria-label="Similarity to the image, mean and RMS contrast in every frame"></canvas>
+              <p class="small" id="seq-measured"></p>
+              <div id="seq-downloads"></div>
             </div>
           </div>
           <input type="file" id="upload-input" accept="image/*" hidden />

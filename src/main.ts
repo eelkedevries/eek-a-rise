@@ -10,6 +10,7 @@ import { acceptDrops, ImageInputError } from './image-input';
 import { addUpload, allItems, loadExamples, type ImageItem } from './state';
 import { mountGallery, type Gallery } from './ui/gallery';
 import { mountOneImage } from './ui/one-image';
+import { mountSequencePlayer } from './ui/sequence-player';
 import { mountSequenceSetup } from './ui/sequence-setup';
 import { mountTabs } from './ui/tabs';
 
@@ -28,6 +29,7 @@ function status(message: string, error = false): void {
 
 const oneImage = mountOneImage(panels.one, status);
 const setup = mountSequenceSetup(panels.sequence);
+mountSequencePlayer(panels.sequence, setup);
 
 const galleries: Record<'one' | 'sequence', Gallery> = {
   one: mountGallery(document.querySelector('#gallery-one')!, {

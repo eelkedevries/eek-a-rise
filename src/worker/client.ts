@@ -1,7 +1,8 @@
 /** Typed promise interface to the RISE worker. */
+import type { BuildOptions, BuiltSequence } from '../core/build';
 import type { FrameResult, OneImageMethod, Request, Response, SourceStats } from './protocol';
 
-type Pending = { resolve: (value: never) => void; reject: (error: Error) => void };
+type Pending = { resolve: (value: never) => void; reject: (error: Error) => void; progress?: (done: number, total: number) => void };
 type WithoutId<T> = T extends unknown ? Omit<T, 'id'> : never;
 
 export class RiseWorker {
@@ -19,6 +20,10 @@ export class RiseWorker {
       const message = event.data;
       const pending = this.pending.get(message.id);
       if (!pending) return;
+      if ('progress' in message) {
+        pending.progress?.(message.progress, message.total);
+        return;
+      }
       this.pending.delete(message.id);
       if (message.ok) pending.resolve(message.result as never);
       else pending.reject(new Error(message.error));
@@ -30,10 +35,10 @@ export class RiseWorker {
     return worker;
   }
 
-  private call<T>(request: WithoutId<Request>, transfer: Transferable[] = []): Promise<T> {
+  private call<T>(request: WithoutId<Request>, transfer: Transferable[] = [], progress?: Pending['progress']): Promise<T> {
     const id = this.nextId++;
     return new Promise<T>((resolve, reject) => {
-      this.pending.set(id, { resolve: resolve as (value: never) => void, reject });
+      this.pending.set(id, { resolve: resolve as (value: never) => void, reject, progress });
       this.worker.postMessage({ ...request, id }, transfer);
     });
   }
@@ -57,5 +62,10 @@ export class RiseWorker {
 
   cycle(n: number): Promise<FrameResult[]> {
     return this.call({ type: 'cycle', n });
+  }
+
+  /** Renders a whole sequence; the prepared images are transferred, so the caller passes copies it can spare. */
+  build(options: BuildOptions, progress: (done: number, total: number) => void): Promise<BuiltSequence> {
+    return this.call({ type: 'build', options }, options.images.map((image) => image.buffer), progress);
   }
 }
