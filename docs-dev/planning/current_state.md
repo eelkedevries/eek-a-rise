@@ -26,6 +26,14 @@ This file records what *is* (current reality). The binding design canon is `docs
 - FFT (005): `src/core/fft.ts`, Stockham mixed radix (4, 2, 3, 5) and Bluestein,
   checked against the golden data by Vitest in `npm run check`
   (`tests/golden/`); 400 × 400 `fft2` + `ifft2` takes about 16 ms in Node.
+- RISE core (006): `src/core/spectrum.ts`, `rise.ts` (circular and sign-rule
+  targets, plain interpolation, noise path, spectrum matching, normalisation),
+  `schedule.ts` (sequence schedule and `schedule.csv`), `sequence.ts` (streaming
+  renderer that holds only the current cycle's arrays; random arrays by index),
+  `stats.ts` (display mapping, fixation cross, per-frame measurements) and
+  `prng.ts` (sfc32 with random access to the arrays of a stream). Golden tests
+  for every ported case, including the full `sequence_64`; invariant tests in
+  `tests/core/`.
 
 ## Key decisions
 
@@ -35,7 +43,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 006 (`006_rise_core.md`).
+Prompt 007 (`007_one_image_mode.md`).
 
 ## Prompts run
 
@@ -46,3 +54,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `003_deploy_command.md`
 - `004_page_shell.md`
 - `005_fft_core.md`
+- `006_rise_core.md`
