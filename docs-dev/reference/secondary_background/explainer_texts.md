@@ -115,9 +115,10 @@ random phase spectrum to the image's own, so every frame keeps the common
 amplitude spectrum and therefore the same mean luminance and RMS contrast, up to
 8-bit rounding.
 
-Each phase travels the shorter way round the circle, and a random half of the
-phases make one extra full turn in a random direction, so that the image stays
-hidden until about halfway and is recognisable for about a third of each cycle.
+Each phase travels the shorter way round the circle, as in the minimum-distance
+interpolation of Ales et al. (2012), and a random half of the phases make one
+extra full turn in a random direction, so that the image stays hidden until about
+halfway and is recognisable for about a third of each cycle.
 Interpolating the raw phase values instead, with the extra turn following the
 sign of the image's phase, avoids the bright corners of plain interpolation only
 at the halfway point: earlier the corners brighten, later they darken. The page
@@ -180,10 +181,15 @@ linearised (gamma-corrected) or measured.
   multiple cyclic entrainments. *Journal of Cognitive Neuroscience, 31*(10),
   1573–1588. <https://doi.org/10.1162/jocn_a_01428>
 - Sadr, J., & Sinha, P. (2004). Object recognition and Random Image Structure
-  Evolution. *Cognitive Science, 28*, 259–287.
+  Evolution. *Cognitive Science, 28*(2), 259–287.
+  <https://doi.org/10.1207/s15516709cog2802_7>
 - Willenbockel, V., Sadr, J., Fiset, D., Horne, G. O., Gosselin, F., & Tanaka,
   J. W. (2010). Controlling low-level image properties: The SHINE toolbox.
-  *Behavior Research Methods, 42*, 671–684.
+  *Behavior Research Methods, 42*(3), 671–684. <https://doi.org/10.3758/BRM.42.3.671>
+- Ales, J. M., Farzin, F., Rossion, B., & Norcia, A. M. (2012). An objective
+  method for measuring face detection thresholds using the sweep steady-state
+  visual evoked response. *Journal of Vision, 12*(10), 18.
+  <https://doi.org/10.1167/12.10.18> (added 2026-10-27 for the circular target)
 
 ## Superseded (approved 2026-10-27, compound stimulus)
 

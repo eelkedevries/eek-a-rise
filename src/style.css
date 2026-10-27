@@ -777,3 +777,58 @@ progress {
   align-items: center;
   gap: 6px;
 }
+
+/* ---------------------------------------------------------------- how it works */
+
+.prose h3 {
+  margin: 28px 0 10px;
+  font-size: 1.3rem;
+}
+
+.prose p,
+.prose li {
+  color: var(--text);
+}
+
+.figure {
+  margin: 20px 0;
+  max-width: 100%;
+}
+
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: var(--stage);
+}
+
+.figure figcaption {
+  margin-top: 8px;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.researchers {
+  margin: 28px 0;
+  padding: 4px 18px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.researchers summary {
+  padding: 10px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.references li {
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+}

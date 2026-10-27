@@ -6,6 +6,7 @@ import '@fontsource/spectral/latin-500.css';
 import '@fontsource/jetbrains-mono/latin-400.css';
 import './style.css';
 
+import { linkTags, renderHowItWorks } from './content/render';
 import { acceptDrops, ImageInputError } from './image-input';
 import { mountDownloads } from './ui/downloads';
 import { addUpload, allItems, loadExamples, type ImageItem } from './state';
@@ -14,6 +15,9 @@ import { mountOneImage } from './ui/one-image';
 import { mountSequencePlayer } from './ui/sequence-player';
 import { mountSequenceSetup } from './ui/sequence-setup';
 import { mountTabs } from './ui/tabs';
+
+renderHowItWorks(document.querySelector('#how')!);
+linkTags(document.querySelector('#panel-sequence')!);
 
 const uploadInput = document.querySelector<HTMLInputElement>('#upload-input')!;
 const panels = {

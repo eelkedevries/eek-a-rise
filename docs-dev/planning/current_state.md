@@ -60,6 +60,11 @@ This file records what *is* (current reality). The binding design canon is `docs
   `src/ui/downloads.ts`. `tests/core/export.test.ts` decodes a ZIP back to the
   built frames; `tools/reference/verify_export.py` checks a ZIP independently in
   Python; `scripts/verify-export.sh` checks a video with ffprobe.
+- How it works (011): prose in `src/content/` (general text, *For researchers*,
+  references, rendered by `render.ts`), three WebP figures in `public/figures/`,
+  parameter tags linked to the explaining paragraphs, and
+  `scripts/check-claims.mjs` in `npm run check`. Ales et al. (2012) added as the
+  precedent for shortest-way interpolation.
 
 ## Key decisions
 
@@ -69,7 +74,7 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 011 (`011_how_it_works.md`).
+Prompt 012 (`012_about_docs_release.md`).
 
 ## Prompts run
 
@@ -85,3 +90,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `008_trial_setup.md`
 - `009_trial_render_player.md`
 - `010_downloads.md`
+- `011_how_it_works.md`
