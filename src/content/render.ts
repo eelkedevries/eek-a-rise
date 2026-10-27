@@ -1,5 +1,6 @@
 /** Renders the content modules into the How it works section. */
 import * as general from './how-it-works';
+import * as about from './about';
 import * as expert from './for-researchers';
 import { references } from './references';
 
@@ -63,4 +64,9 @@ export function linkTags(root: HTMLElement): void {
     });
     tag.replaceWith(link);
   }
+}
+
+export function renderAbout(container: HTMLElement): void {
+  container.innerHTML = `${paragraphs(about.paragraphs)}
+    <p>${about.licence} The source code is on <a href="${about.source}">GitHub</a>. Version ${__APP_VERSION__}.</p>`;
 }

@@ -1,6 +1,6 @@
 # Specification
 
-**Version:** 0.2 · **Last updated:** 2026-10-27
+**Version:** 1.0 · **Last updated:** 2026-10-27
 
 The authoritative design canon for this project. **Only filled sections are
 binding.** An empty or stubbed section means "not yet decided", not a
@@ -19,6 +19,11 @@ Changes:
   brightens and then darkens the image corners at intermediate weights, which
   the published clip does not show (see *RISE*). The sign rule stays available
   and verified.
+- 1.0 (v1 release): records the decisions taken while building (prompts
+  004–011): the image and upload limits, the video range of the video export,
+  the pinned export libraries, the contents of `parameters.json`, the claim
+  check, the end-to-end check, and Ales et al. (2012) as the precedent for
+  shortest-way phase interpolation.
 
 ## Scope
 
@@ -75,8 +80,14 @@ publication of the original study's photographs.
   `spectrum` → worker computes frames (`Float64Array`) → display mapping →
   `Uint8Array` frames → canvas, PNG or video encoder.
 - **Performance:** the default sequence (360 frames at 400 × 400) must render in
-  under 90 s on a mid-range laptop, with a progress bar and a cancel button. A
-  sequence may hold at most 400 MB of 8-bit frames; the page refuses larger ones.
+  under 90 s on a mid-range laptop, with a progress bar and a cancel button
+  (measured: about 7 s in Node and 9 s in headless Chromium). A sequence may hold
+  at most 400 MB of 8-bit frames, at most 64 images and at most 64 × 400 × 400
+  prepared image pixels; the page refuses larger ones. The renderer holds only
+  the arrays of the current cycle, and the uniform arrays are redrawn by index
+  from saved generator states.
+- **Uploads:** image files up to 25 MB, decoded with `createImageBitmap`, reduced
+  to at most 1600 px on the long side before preparation.
 - **Checks:** `npm run check` runs Vitest tests that compare the port with the
   golden data in `tools/reference/golden/` and test the properties in
   *Validation*.
@@ -271,9 +282,20 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
   image names), `schedule.csv`, `frame_stats.csv` and `README.txt`, in one ZIP
   (fflate).
 - **Video:** H.264 MP4 encoded frame by frame with WebCodecs, each frame
-  timestamped exactly at `n / fps` (Mediabunny, pinned). WebM/VP9 is the
-  fallback where H.264 encoding is unavailable. Without WebCodecs the video
-  button is disabled with an explanation; the PNG ZIP remains.
+  timestamped exactly at `n / fps` (Mediabunny 1.61.3, pinned; the track's frame
+  rate snaps timestamps), 8 Mbit/s, a key frame every second. Grey values are
+  mapped to the video range (Y = 16 + 219 · g / 255, U = V = 128, BT.709,
+  limited range flagged), so standard players show the frames' grey levels.
+  WebM/VP9 is the fallback where H.264 encoding is unavailable. Without WebCodecs
+  the video button is disabled with an explanation; the PNG ZIP remains.
+- **Libraries:** fast-png 8.0.0 (PNG) and fflate 0.8.3 (ZIP, PNGs stored
+  without recompression), pinned exactly. The ZIP is made in the worker; the
+  frames are lent to it (transferred) and handed back.
+- `parameters.json` uses snake_case keys: app, version, url, created, seed,
+  method, frame rate, tag frequency, period, cycles, cycles per image, the three
+  durations and frame counts, peak weight and its formula, image size, outline,
+  spectrum matching, normalisation, fixation cross, display mapping, clipped
+  share, image names, and the measured ranges.
 - The download section states that lossy video changes pixel values and can undo
   the matched statistics, so research use should take the PNG frames and present
   them with Psychtoolbox or PsychoPy on a display locked to the frame rate, and
@@ -301,9 +323,14 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
     tested to show the corner artefact;
   - the same seed gives byte-identical frames;
   - a PNG ZIP, decoded again, returns exactly the built frames.
-- **End to end** (`npm run e2e`, not part of `check`): Playwright builds the
-  default sequence in the built page, downloads the ZIP, and
-  `tools/reference/verify_export.py` checks it independently in Python.
+- **Claims** (`npm run check`): `scripts/check-claims.mjs` scans the prose in
+  `src/content/` and `index.html` for contractions and the phrases the claim
+  rules exclude.
+- **End to end** (`npm run e2e`, not part of `check`; Playwright 1.63.0,
+  Chromium): no console errors and no request outside `/eek-a-rise/`; One image
+  keeps mean and RMS contrast; the default sequence builds and plays; the
+  downloaded ZIP passes `tools/reference/verify_export.py`; the downloaded video
+  passes `scripts/verify-export.sh` (ffprobe).
 - Reference numbers are in
   `docs-dev/reference/secondary_background/reference_verification.json` and
   `clip_analysis_results.json`.

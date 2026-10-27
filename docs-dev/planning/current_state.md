@@ -65,6 +65,9 @@ This file records what *is* (current reality). The binding design canon is `docs
   parameter tags linked to the explaining paragraphs, and
   `scripts/check-claims.mjs` in `npm run check`. Ales et al. (2012) added as the
   precedent for shortest-way interpolation.
+- Release (012): About (`src/content/about.ts`), version 1.0.0, user documents
+  in `docs/` (usage with presentation loops, validation, troubleshooting,
+  installation), `npm run e2e` (`tests/e2e/sequence.e2e.mjs`, Playwright).
 
 ## Key decisions
 
@@ -74,7 +77,10 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 012 (`012_about_docs_release.md`).
+**v1 is live** at <https://eelkedevries.com/eek-a-rise/> (version 1.0.0,
+specification 1.0). Next: prompt 013 (Projects card), only once the owner has
+confirmed it; the owner's review of the adapted explainer texts (sections 2–4)
+and of the circular target as the default.
 
 ## Prompts run
 
@@ -91,3 +97,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `009_trial_render_player.md`
 - `010_downloads.md`
 - `011_how_it_works.md`
+- `012_about_docs_release.md`
