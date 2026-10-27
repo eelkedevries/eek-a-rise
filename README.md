@@ -32,6 +32,14 @@ and the test data the browser code is checked against.
 
 ## Development
 
+### Running locally
+
+```bash
+npm ci          # install the pinned dependencies
+npm run dev     # serve at http://localhost:5173/eek-a-rise/
+npm run check   # type check, build and the repository checks
+```
+
 Built with Vite and TypeScript. Prompt files live in `docs-dev/agent/prompts/`;
 start with `docs-dev/agent/how_to_use.md`. Deployment is described in
 `docs/deployment.md`.

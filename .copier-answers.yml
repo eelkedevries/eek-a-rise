@@ -1,0 +1,21 @@
+# This file is maintained by Copier; do not edit by hand.
+# It records the answers used to generate this project and enables `copier update`.
+_commit: v0.3.0
+_src_path: gh:eelkedevries/eek-a-template
+author: Eelke de Vries
+description: 'Images that emerge from noise: an in-browser implementation of the RISE
+    stimuli of de Vries & Baldauf (2019), for whole images.'
+language_locale: British English in code, comments, and user-facing text.
+license: MIT
+project_name: eek-a-rise
+project_title: eek-a-rise
+stack: node-vite + typescript
+stack_kind: node
+static_site: true
+testing_policy: no tests unless a prompt asks for them.
+verify_command: '`npm run check` (after the scaffold exists).'
+visibility: public
+workflow_policy: commit and push directly to `main`; no feature branches or pull requests
+    unless explicitly requested.
+year: '2026'
+

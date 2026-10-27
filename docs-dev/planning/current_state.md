@@ -25,8 +25,10 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 
 ## In progress / next
 
-Prompt 001 (`001_setup.md`).
+Prompt 002 (`002_website_deploy_workflow.md`).
 
 ## Prompts run
 
 _A running list of completed prompts, newest last. Add the prompt filename as each is run._
+
+- `001_setup.md`
