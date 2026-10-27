@@ -9,6 +9,7 @@ on the golden data; the binding definitions are in
 | `rise_reference.py` | spectrum, both RISE targets, noise path, spectrum matching, normalisation, the full-image `Sequence` (what the page makes) and the paper's composite `Trial` (kept as the reference for the clip measurements) |
 | `make_golden.py` | writes `golden/` (inputs stored exactly; manifest with tolerances) |
 | `make_assets.py` | writes `demo-faces/` (15 synthetic faces), figures, a demo trial, a demo sequence and `out/verification.json` |
+| `verify_export.py` | checks a downloaded PNG ZIP independently: constant mean, RMS contrast and amplitude spectrum, content at the tag frequency |
 | `golden/` | test data for the TypeScript port; see `golden/manifest.json` |
 | `demo-faces/` | example images for the page: 3 invented identities, 3 eye and 2 mouth expressions each |
 
@@ -17,7 +18,8 @@ on the golden data; the binding definitions are in
 ```bash
 uv sync                  # once: the pinned environment (uv.lock)
 uv run make_golden.py    # regenerate the golden data (deterministic)
-uv run make_assets.py    # demo faces, figures, demo trial; needs ffmpeg for the MP4
+uv run make_assets.py    # demo faces, figures, demo trial and sequence; needs ffmpeg for the MP4s
+uv run verify_export.py path/to/eek-a-rise_<seed>.zip
 ```
 
 `out/` is generated and not committed. Regenerating `golden/` changes the test
