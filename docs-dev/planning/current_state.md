@@ -8,9 +8,14 @@ This file records what *is* (current reality). The binding design canon is `docs
 
 ## Systems
 
-- Handoff seed (2026-10-27): the documentation, the specification v0.1 and the
+- Handoff seed (2026-10-27): the documentation, the specification and the
   Python reference in `tools/reference/` (`rise_reference.py`, golden data, 15
   synthetic demo faces). No web application yet.
+- Re-scope (2026-10-27, specification 0.2): full images only; the second mode is
+  *Sequence* (frequency-tagged sequences of whole images), not the compound
+  trial. The reference gained `Sequence`, the circular RISE target (now the
+  default; the sign rule of 0.1 brightens and darkens the corners) and golden
+  cases `rise_circular_200` and `sequence_64`.
 
 ## Key decisions
 

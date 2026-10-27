@@ -18,9 +18,10 @@ systems or future prompts.
   - section 4 holds the captions;
   - section 5 holds the short texts;
   - *Claim rules* at the top bind any wording you add or shorten.
+- Wording: sections 2 and 3 were adapted on 2026-10-27 for the full-image scope
+  (specification 0.2); use the adapted versions.
 - Figures: `docs-dev/reference/secondary_background/figures/`
-  (`rise_photo_sadr_sinha_vs_plain.png`, `chessboard_on_grey.png`,
-  `demo_trial_first_identity.png`).
+  (`rise_methods.png`, `chessboard_on_grey.png`, `demo_sequence.png`).
 - The public-build check rejects any mention of `docs-dev` in built files.
 
 ## Required changes
@@ -31,13 +32,12 @@ systems or future prompts.
    with the chessboard figure after
    the chessboard sentence and the RISE figure after the paragraph on scrambling.
 3. Add a collapsible *For researchers* block with section 3 verbatim, the
-   demo-trial figure, and the *Published clip* note from section 5 with a link
+   demo-sequence figure, and the *Published clip* note from section 5 with a link
    to the clip <https://figshare.com/s/f8a1e2760937ca35c4f0>.
 4. Add *References* with the three references from `explainer_texts.md`,
    including the DOI link for de Vries and Baldauf (2019).
-5. In the Compound trial parameters (prompt 008), make each *clip* or
-   *assumption* label link to the paragraph of *For researchers* that explains
-   it.
+5. In the Sequence parameters (prompt 008), make each *clip* or *this project*
+   label link to the paragraph of *For researchers* that explains it.
 6. Keep all public prose in `src/content/` (one module per section). Add
    `scripts/check-claims.mjs` and include it in `npm run check`. It scans
    `src/content/**` and the text nodes of `index.html` (not other code, where

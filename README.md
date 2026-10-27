@@ -1,15 +1,15 @@
 # eek-a-rise
 
-*Faces that emerge from noise: an in-browser implementation of the RISE compound-face stimuli of de Vries & Baldauf (2019).*
+*Images that emerge from noise: an in-browser implementation of the RISE stimuli of de Vries & Baldauf (2019), for whole images.*
 
 ## What this is
 
 A web page at <https://eelkedevries.com/eek-a-rise/> that scrambles an image into
 noise and restores it again, while its overall brightness, contrast and amount of
-coarse and fine detail stay the same. It also builds the compound face stimuli of
-de Vries and Baldauf (2019): eyes and mouth fading in and out at their own rates
-(2 Hz and 1.33 Hz) while the identity changes at 0.66 Hz, ready to download as
-lossless frames or as video.
+coarse and fine detail stay the same. It also builds frequency-tagged sequences of
+whole images, as in de Vries and Baldauf (2019): each image emerges from noise and
+dissolves into it at a fixed rate (2 Hz by default), ready to download as lossless
+frames or as video, with the measured statistics of every frame.
 
 Everything runs in your browser. Images are never uploaded.
 
@@ -17,9 +17,9 @@ Everything runs in your browser. Images are never uploaded.
 
 The images fade by Random Image Structure Evolution (RISE; Sadr & Sinha, 2004):
 the Fourier phase is interpolated towards a random phase while the amplitude
-spectrum is kept. The implementation follows the paper's Methods; parameters the
-paper does not report were inferred from the published example clip and are marked
-as such on the page. `tools/reference/` holds a Python reference implementation
+spectrum is kept. The implementation follows the paper's Methods, for whole
+images only; parameters the paper does not report were inferred from the
+published example clip and are marked as such on the page. `tools/reference/` holds a Python reference implementation
 and the test data the browser code is checked against.
 
 - de Vries, E., & Baldauf, D. (2019). Attentional weighting in the face processing

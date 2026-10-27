@@ -6,9 +6,11 @@ Journal of Cognitive Neuroscience, 31(10), 1573-1588. https://doi.org/10.1162/jo
 RISE: Sadr, J., & Sinha, P. (2004). Object recognition and Random Image Structure Evolution.
 Cognitive Science, 28, 259-287 (Section 2.1).
 
-This module is the numerical reference for the browser implementation. The TypeScript port must
-reproduce `spectrum`, `noise_phase`, `rise_target`, `rise_frame`, `spec_match` and `schedule`
-on the golden data in ./golden (see make_golden.py). Randomness is always passed in as arrays,
+This module is the numerical reference for the browser implementation, which makes full-image
+sequences only (`Sequence`); the composite of the paper (`Trial`) is kept as the reference for the
+measurements of the published clip. The TypeScript port must reproduce `spectrum`, `noise_phase`,
+`rise_target`, `rise_frame`, `noise_path`, `spec_match`, `sequence_schedule` and `Sequence` on the
+golden data in ./golden (see make_golden.py). Randomness is always passed in as arrays,
 so both implementations can be compared exactly. Values not reported in either paper are marked
 ASSUMPTION; docs-dev/reference/primary_authoritative/specification.md is binding.
 """
@@ -129,6 +131,35 @@ def rise_target(src_phase: np.ndarray, rand_phase: np.ndarray, r: np.ndarray) ->
     return antisymmetric(target)
 
 
+def wrap(x: np.ndarray) -> np.ndarray:
+    """Angle in [-pi, pi), with floor so that every IEEE implementation agrees bit for bit."""
+    return x - 2 * np.pi * np.floor((x + np.pi) / (2 * np.pi))
+
+
+def circular_target(src_phase: np.ndarray, rand_phase: np.ndarray, r: np.ndarray) -> np.ndarray:
+    """End-point phase for RISE without position-specific artefacts (the page's default).
+
+    Each component travels from the noise phase to the source phase the shorter way round the
+    circle, wrap(rand - src); for a random half of the pairs (r(k) + r(-k) < 1, as in rise_target)
+    it makes one extra full turn, in a random direction (+ when r(k) < r(-k)), which is independent
+    of the source phase. rise_target instead interpolates raw values in (-pi, pi] and turns towards
+    the sign of the source phase; both choices depend on where the angle wraps, so the expected
+    frame is not the source scaled down but a distorted version whose phases are biased at every
+    intermediate weight except 0.5: the image corners (the DFT origin) turn bright near weight 0.3
+    and dark near 0.75, by about 20 SD for the demo faces. Here the expected frame at weight a is the
+    source deviation times sinc(1 - a) * cos(pi (1 - a))**2, the same at every position.
+    """
+    pick = (r + neg(r)) < 1.0
+    turn = np.where(r < neg(r), 1.0, -1.0)
+    target = src_phase + wrap(rand_phase - src_phase) + pick * turn * 2 * np.pi
+    fixed = self_conjugate(src_phase.shape)
+    target[fixed] = src_phase[fixed]
+    return antisymmetric(target)
+
+
+TARGETS = {"circular": circular_target, "sign": rise_target}
+
+
 def rise_frame(amp: np.ndarray, src_phase: np.ndarray, target: np.ndarray, a: float) -> np.ndarray:
     """a = 1: the source image; a = 0: noise with the source's amplitude spectrum."""
     return from_spectrum(amp, a * src_phase + (1.0 - a) * target)
@@ -211,6 +242,112 @@ def schedule(fps=FPS, f_eyes=F_EYES, f_mouth=F_MOUTH, f_identity=F_IDENTITY,
                 row.update({f"{b}_cycle": -1, f"{b}_half": "", f"{b}_weight": 0.0})
         rows.append(row)
     return rows
+
+
+# ------------------------------------------------------------------ full-image sequence
+
+def whole_frames(seconds: float, fps: int) -> int:
+    n = seconds * fps
+    if abs(n - round(n)) > 1e-9:
+        raise ValueError(f"{seconds} s is not a whole number of frames at {fps} frames/s")
+    return int(round(n))
+
+
+def sequence_schedule(fps=FPS, f_tag=F_EYES, baseline_s=BASELINE_S, stimulus_s=STIMULUS_S, post_s=POST_S,
+                      cycles_per_image=1, n_images=1, peak=1.0):
+    """One row per frame of a full-image sequence: whole images emerge from and dissolve into noise.
+
+    The single band of the paper's composite, applied to the whole image. The stimulus must hold a
+    whole number of cycles, so it starts and ends in pure noise and joins the baseline and post
+    noise without a jump. Cycle k shows image (k // cycles_per_image) % n_images; weight is the
+    interpolation weight actually applied (peak = 1 reaches the full image). With f_tag = 2 Hz,
+    cycles_per_image = 3 and n_images = 3 the rows equal the eye columns of schedule().
+    """
+    nb, ns, npost = (whole_frames(s, fps) for s in (baseline_s, stimulus_s, post_s))
+    P = period_frames(f_tag, fps)
+    if P < 2:
+        raise ValueError("a cycle needs at least 2 frames")
+    if ns == 0 or ns % P:
+        raise ValueError(f"the stimulus ({ns} frames) must hold a whole number of {P}-frame cycles")
+    if cycles_per_image < 1 or n_images < 1 or not 0 < peak <= 1:
+        raise ValueError("cycles_per_image and n_images must be at least 1, and 0 < peak <= 1")
+    rows = []
+    for n in range(nb + ns + npost):
+        row = {"frame": n, "time_s": n / fps}
+        if n < nb:
+            row.update(segment="baseline", stim_frame=-1, cycle=-1, half="", weight=0.0, image=-1, noise_w=n / nb)
+        elif n < nb + ns:
+            i = n - nb
+            k, p = divmod(i, P)
+            row.update(segment="stimulus", stim_frame=i, cycle=k, half="on" if 2 * p < P else "off",
+                       weight=float(weight(p, P, 0.0, peak)), image=(k // cycles_per_image) % n_images,
+                       noise_w=float("nan"))
+        else:
+            j = n - nb - ns
+            row.update(segment="post", stim_frame=-1, cycle=-1, half="", weight=0.0, image=-1, noise_w=(j + 1) / npost)
+        rows.append(row)
+    return rows
+
+
+def normalise_amplitude(amp: np.ndarray, mean: float, rms: float) -> np.ndarray:
+    """Amplitude spectrum with the given mean (DC) and RMS contrast (Parseval); one linear map for all frames."""
+    out = amp.copy()
+    n = amp.size
+    ac = np.sqrt(np.sum(amp ** 2) - amp[0, 0] ** 2)
+    out *= rms * n / ac
+    out[0, 0] = mean * n
+    return out
+
+
+@dataclass
+class Sequence:
+    """Full-image RISE sequence: baseline noise, then each cycle one image emerges and dissolves, then post noise.
+
+    Randomness comes from `uniform(shape)` (values in [0, 1)), drawn in this order: the K + 3 noise
+    images for R[0..K+2]; the r arrays of the onset targets k = 0..K-1, then of the offset targets;
+    then the r arrays of the baseline and post targets (K = number of cycles).
+    """
+    images: list[np.ndarray]
+    fps: int = FPS
+    f_tag: float = F_EYES
+    baseline_s: float = BASELINE_S
+    stimulus_s: float = STIMULUS_S
+    post_s: float = POST_S
+    cycles_per_image: int = 1
+    peak: float = 1.0
+    normalise: tuple[float, float] | None = None   # (mean, rms) or None to keep the set's own
+    method: str = "circular"                        # "circular" (default) or "sign" (rise_target)
+
+    def schedule(self):
+        return sequence_schedule(self.fps, self.f_tag, self.baseline_s, self.stimulus_s, self.post_s,
+                                 self.cycles_per_image, len(self.images), self.peak)
+
+    def render(self, uniform) -> np.ndarray:
+        rows = self.schedule()
+        eq, amp = spec_match(self.images)
+        if self.normalise is not None:
+            amp = normalise_amplitude(amp, *self.normalise)
+        src = [spectrum(im)[1] for im in eq]
+        shape = amp.shape
+        K = 1 + max(r["cycle"] for r in rows)
+        image_of = {r["cycle"]: r["image"] for r in rows if r["cycle"] >= 0}
+        target = TARGETS[self.method]
+        R = [noise_phase(uniform(shape)) for _ in range(K + 3)]
+        t_on = [target(src[image_of[k]], R[k + 1], uniform(shape)) for k in range(K)]
+        t_off = [target(src[image_of[k]], R[k + 2], uniform(shape)) for k in range(K)]
+        t_base = target(R[0], R[1], uniform(shape))
+        t_post = target(R[K + 1], R[K + 2], uniform(shape))
+        out = np.empty((len(rows),) + shape)
+        for row in rows:
+            f = row["frame"]
+            if row["segment"] == "baseline":
+                out[f] = from_spectrum(amp, noise_path(R[0], t_base, row["noise_w"]))
+            elif row["segment"] == "post":
+                out[f] = from_spectrum(amp, noise_path(R[K + 1], t_post, row["noise_w"]))
+            else:
+                k = row["cycle"]
+                out[f] = rise_frame(amp, src[image_of[k]], t_on[k] if row["half"] == "on" else t_off[k], row["weight"])
+        return out
 
 
 # ------------------------------------------------------------------ composite trial

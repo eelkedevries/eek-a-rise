@@ -30,12 +30,11 @@ systems or future prompts.
    - the heading `eek-a-rise`;
    - this text (owner may edit before running):
 
-     > Faces that emerge from noise and dissolve back into it, while the image's
-     > overall brightness and contrast stay the same. The page implements the
-     > frequency-tagged compound faces of my MEG study with Daniel Baldauf (2019):
-     > try it on one image, or build the full stimulus with eyes, mouth and
-     > identity each changing at their own rate, and download it as lossless
-     > frames or video.
+     > Images that emerge from noise and dissolve back into it, while the
+     > image's overall brightness and contrast stay the same. The page uses the
+     > method of my MEG study with Daniel Baldauf (2019): try it on one image, or
+     > build a frequency-tagged sequence of whole images, check its statistics
+     > frame by frame, and download it as lossless frames or video.
      >
      > Everything runs in your browser; your images are never uploaded.
 

@@ -94,7 +94,7 @@ case("noise_and_mask_64", "noise_path(R0, rise_target(R0, R1, r), w) for w in [0
      r=save("noise_and_mask_64_r", rp_x, np.uint32), us=save("noise_and_mask_64_us", us_x, np.uint32),
      path=save("noise_and_mask_64_path", path, np.float64), mask=save("noise_and_mask_64_mask", mask, np.float64))
 
-# 5. default frame schedule
+# 5. default frame schedule of the paper's composite (its eye columns are the full-image schedule at 2 Hz)
 rows = rr.schedule()
 with open(OUT / "schedule_default.csv", "w", newline="") as fh:
     w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
@@ -103,6 +103,42 @@ with open(OUT / "schedule_default.csv", "w", newline="") as fh:
         w.writerow({k: (f"{v:.12f}" if isinstance(v, float) else v) for k, v in row.items()})
 case("schedule_default", "rise_reference.schedule() with the paper's defaults at 60 frames/s",
      {"weights_max_abs": 1e-12, "other_columns": "exact"}, csv={"file": "schedule_default.csv"})
+
+# 6. the circular target on the inputs of case 2 (no new random draws)
+circ = rr.circular_target(src, R, r)
+case("rise_circular_200", "circular_target(src, R, r) on the inputs of rise_200 (same image, u and r), "
+     f"rise_frame at weights {levels}; wrap(x) = x - 2*pi*floor((x + pi) / (2*pi))", {"max_abs": 1e-9},
+     input={"file": "rise_200_in.uint8", "dtype": "uint8", "shape": [200, 200]},
+     u={"file": "rise_200_u.uint32", "dtype": "uint32", "shape": [200, 200]},
+     r={"file": "rise_200_r.uint32", "dtype": "uint32", "shape": [200, 200]}, weights={"values": levels},
+     frames=save("rise_circular_200_frames", np.stack([rr.rise_frame(amp, src, circ, a) for a in levels]), np.float64))
+
+# 7. full-image sequence (64 x 64): two images, 10 Hz at 60 frames/s, peak 0.9, normalised mean and RMS
+imgs = [smooth_image((64, 64)) for _ in range(2)]
+seq = rr.Sequence([im.astype(np.float64) for im in imgs], fps=60, f_tag=10.0, baseline_s=0.1, stimulus_s=0.4,
+                  post_s=0.05, cycles_per_image=1, peak=0.9, normalise=(0.5, 0.12), method="circular")
+draws = []
+
+
+def draw(shape):
+    x, u = uniform(shape)
+    draws.append(x)
+    return u
+
+
+seq_frames = seq.render(draw)
+seq_rows = seq.schedule()
+with open(OUT / "sequence_64_schedule.csv", "w", newline="") as fh:
+    w = csv.DictWriter(fh, fieldnames=list(seq_rows[0]), lineterminator="\n")
+    w.writeheader()
+    for row in seq_rows:
+        w.writerow({k: (f"{v:.12f}" if isinstance(v, float) else v) for k, v in row.items()})
+case("sequence_64", "Sequence(images, fps=60, f_tag=10, baseline 0.1 s, stimulus 0.4 s, post 0.05 s, "
+     "cycles_per_image=1, peak=0.9, normalise=(0.5, 0.12), method='circular').render(uniform): the uniform arrays in draw order "
+     "(R[0..K+2], onset r, offset r, baseline r, post r), the frames and the schedule",
+     {"max_abs": 1e-9, "schedule": "weights_max_abs 1e-12, other columns exact"},
+     inputs=save("sequence_64_in", np.stack(imgs), np.uint8), uniforms=save("sequence_64_u", np.stack(draws), np.uint32),
+     frames=save("sequence_64_frames", seq_frames, np.float64), schedule={"file": "sequence_64_schedule.csv"})
 
 (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
 print(f"wrote {len(manifest['cases'])} cases, {sum(p.stat().st_size for p in OUT.iterdir()) / 1e6:.2f} MB")

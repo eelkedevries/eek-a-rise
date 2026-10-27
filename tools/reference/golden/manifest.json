@@ -281,6 +281,97 @@
           "file": "schedule_default.csv"
         }
       }
+    },
+    {
+      "name": "rise_circular_200",
+      "description": "circular_target(src, R, r) on the inputs of rise_200 (same image, u and r), rise_frame at weights [0.0, 0.25, 0.5, 0.75, 1.0]; wrap(x) = x - 2*pi*floor((x + pi) / (2*pi))",
+      "tolerance": {
+        "max_abs": 1e-09
+      },
+      "files": {
+        "input": {
+          "file": "rise_200_in.uint8",
+          "dtype": "uint8",
+          "shape": [
+            200,
+            200
+          ]
+        },
+        "u": {
+          "file": "rise_200_u.uint32",
+          "dtype": "uint32",
+          "shape": [
+            200,
+            200
+          ]
+        },
+        "r": {
+          "file": "rise_200_r.uint32",
+          "dtype": "uint32",
+          "shape": [
+            200,
+            200
+          ]
+        },
+        "weights": {
+          "values": [
+            0.0,
+            0.25,
+            0.5,
+            0.75,
+            1.0
+          ]
+        },
+        "frames": {
+          "file": "rise_circular_200_frames.float64",
+          "dtype": "float64",
+          "shape": [
+            5,
+            200,
+            200
+          ]
+        }
+      }
+    },
+    {
+      "name": "sequence_64",
+      "description": "Sequence(images, fps=60, f_tag=10, baseline 0.1 s, stimulus 0.4 s, post 0.05 s, cycles_per_image=1, peak=0.9, normalise=(0.5, 0.12), method='circular').render(uniform): the uniform arrays in draw order (R[0..K+2], onset r, offset r, baseline r, post r), the frames and the schedule",
+      "tolerance": {
+        "max_abs": 1e-09,
+        "schedule": "weights_max_abs 1e-12, other columns exact"
+      },
+      "files": {
+        "inputs": {
+          "file": "sequence_64_in.uint8",
+          "dtype": "uint8",
+          "shape": [
+            2,
+            64,
+            64
+          ]
+        },
+        "uniforms": {
+          "file": "sequence_64_u.uint32",
+          "dtype": "uint32",
+          "shape": [
+            17,
+            64,
+            64
+          ]
+        },
+        "frames": {
+          "file": "sequence_64_frames.float64",
+          "dtype": "float64",
+          "shape": [
+            33,
+            64,
+            64
+          ]
+        },
+        "schedule": {
+          "file": "sequence_64_schedule.csv"
+        }
+      }
     }
   ]
 }

@@ -23,15 +23,18 @@ systems or future prompts.
    - the privacy text;
    - the licence (MIT) with a link to the source;
    - the app version;
-   - credits for the methods (RISE, SHINE) by reference;
+   - credits for the methods (RISE, SHINE) by reference, and that the page makes
+     whole-image sequences, not the paper's compound stimulus;
    - one sentence that the example faces are synthetic.
-2. `README.md`: keep it concise. Add a short *Features* list (One image, Compound
-   trial, Downloads) and keep *Running locally*.
+2. `README.md`: keep it concise. Add a short *Features* list (One image,
+   Sequence, Downloads, verification) and keep *Running locally*.
 3. `docs/usage.md`: how to use both modes, the parameters and their provenance,
-   the downloads, and research use (PNG frames, refresh-locked presentation, the
-   identity period rule).
+   the downloads, and research use (PNG frames, refresh-locked presentation with
+   example loops for PsychoPy and Psychtoolbox, whole-frame periods, gamma).
+   Add `docs/validation.md`: what the checks show, with the numbers of the
+   default sequence, and how to run `verify_export.py` on an export.
 4. `docs/troubleshooting.md`: no WebCodecs, slow builds on phones, the
-   refresh-rate warning, clipped pixels, large uploads.
+   refresh-rate warning, clipped pixels, large uploads, invalid periods.
 5. Specification: bump to 1.0 and record any decision taken during prompts
    004–011 that is not yet in it.
 6. `docs-dev/planning/current_state.md`: mark v1 live, list the systems, and add
@@ -41,7 +44,9 @@ systems or future prompts.
    - the page loads without console errors;
    - no request leaves `/eek-a-rise/`;
    - One image works on a demo face and an uploaded photo;
-   - the default trial builds, plays and downloads (PNG ZIP; MP4 or WebM).
+   - the default sequence builds, plays and downloads (PNG ZIP; MP4 or WebM);
+   - `npm run e2e` (Playwright) builds the default sequence in the built page,
+     downloads the ZIP and passes `tools/reference/verify_export.py`.
 
 ## Do not implement
 

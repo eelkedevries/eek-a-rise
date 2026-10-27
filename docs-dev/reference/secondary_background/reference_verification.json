@@ -13,6 +13,19 @@
       0.9,
       1.0
     ],
+    "circular": [
+      -0.102,
+      -0.002,
+      0.07,
+      0.063,
+      -0.012,
+      -0.071,
+      -0.008,
+      0.224,
+      0.567,
+      0.876,
+      1.0
+    ],
     "sadr_sinha": [
       -0.102,
       -0.121,
@@ -71,5 +84,54 @@
       "mouth": 1.67
     },
     "pixels_outside_0_1": 4.8680555555555554e-05
+  },
+  "demo_sequence": {
+    "frames": 360,
+    "float_mean_range": [
+      0.627751603624655,
+      0.6277516036246552
+    ],
+    "float_rms_range": [
+      0.08188879266737484,
+      0.08188879266737485
+    ],
+    "float_amplitude_spectrum_max_rel_dev": 2.7635479267264795e-16,
+    "uint8_mean_range": [
+      0.627739,
+      0.627762
+    ],
+    "uint8_rms_range": [
+      0.081888,
+      0.081907
+    ],
+    "uint8_amplitude_spectrum_max_rel_dev": 0.00127,
+    "similarity_to_source_at_peaks": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "similarity_to_source_at_minima_max_abs": 0.264,
+    "similarity_tag_frequency_hz": 2.0,
+    "share_of_cycle_with_similarity_above_half": 0.341,
+    "largest_step_at_joins_vs_median_step": [
+      0.0084,
+      0.0152
+    ],
+    "region_contrast_modulation_at_tag_pct": {
+      "upper_160_rows": 9.8,
+      "lower_160_rows": 7.3
+    },
+    "pixels_outside_0_1": 1.3888888888888888e-07,
+    "pixels_outside_0_1_sign_rule": 4.493055555555556e-05,
+    "corner_3x3_max_abs_z": {
+      "circular": 3.9,
+      "sign_rule": 24.2
+    }
   }
 }

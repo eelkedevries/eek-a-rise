@@ -3,8 +3,9 @@
 Writes:
   demo-faces/*.png                      15 synthetic faces (no real people), 400 x 400 grey
   out/figures/*.png                     figures for the explainer and the docs
-  out/demo_trial_60fps.mp4              one 6-s trial at the true 60 frames/s
-  out/verification.json                 measured properties of the demo trial
+  out/demo_trial_60fps.mp4              one 6-s compound trial at the true 60 frames/s (the paper's layout)
+  out/demo_sequence_60fps.mp4           one 6-s full-image sequence (the page's default)
+  out/verification.json                 measured properties of the demo trial and the demo sequence
 Usage: uv run make_assets.py
 """
 import json
@@ -155,9 +156,15 @@ def figures():
     for name, board in (("chessboard_full", full), ("chessboard_on_grey", ong)):
         pair = np.concatenate([to8(board), np.full((board.shape[0], 12), 255, np.uint8), to8(scramble(board, rng))], 1)
         Image.fromarray(pair).save(FIG / f"{name}.png")
+    # the page's default (circular) against the sign rule and plain interpolation, same noise (drawn after the chessboards, so earlier figures are unchanged)
+    circ = rr.circular_target(src, R, rng.random(img.shape))
+    rows3 = [("RISE", circ), ("sign rule", good), ("plain", naive)]
+    tiles3 = [label(to8(rr.rise_frame(amp, src, t, a), lo, hi), f"{name}, a = {a:.1f}") for name, t in rows3 for a in levels]
+    grid(tiles3, len(levels)).save(FIG / "rise_methods.png")
     # similarity to the source against the interpolation weight
-    curve = {"weight": [round(a, 1) for a in np.linspace(0, 1, 11)], "sadr_sinha": [], "plain": []}
+    curve = {"weight": [round(a, 1) for a in np.linspace(0, 1, 11)], "circular": [], "sadr_sinha": [], "plain": []}
     for a in curve["weight"]:
+        curve["circular"].append(round(float(np.corrcoef(rr.rise_frame(amp, src, circ, a).ravel(), img.ravel())[0, 1]), 3))
         curve["sadr_sinha"].append(round(float(np.corrcoef(rr.rise_frame(amp, src, good, a).ravel(), img.ravel())[0, 1]), 3))
         curve["plain"].append(round(float(np.corrcoef(rr.rise_frame(amp, src, naive, a).ravel(), img.ravel())[0, 1]), 3))
     return curve
@@ -210,9 +217,68 @@ def trial_and_checks():
     return report
 
 
+def similarity(a, b):
+    return float(np.corrcoef(a.ravel(), b.ravel())[0, 1])
+
+
+def corner_z(frames):
+    """Largest |z| (frame mean and SD) among the 3 x 3 pixels at each corner, over all frames."""
+    z = (frames - frames.mean((1, 2), keepdims=True)) / frames.std((1, 2), keepdims=True)
+    c = np.concatenate([z[:, :3, :3], z[:, :3, -3:], z[:, -3:, :3], z[:, -3:, -3:]], axis=1)
+    return round(float(np.abs(c).max()), 1)
+
+
+def sequence_and_checks():
+    """The page's default: the nine eye images of the demo trial as whole faces, 2 Hz, one image per cycle."""
+    images = [draw_face(IDENTITIES[i], eyes=e) for i in range(3) for e in EYES[i]]
+    seq = rr.Sequence(images)
+    fr = seq.render(np.random.default_rng(3).random)
+    sign = rr.Sequence(images, method="sign").render(np.random.default_rng(3).random)
+    rows = seq.schedule()
+    eq, amp = rr.spec_match(images)
+    u8 = (np.clip(fr, 0, 1) * 255).round().astype(np.uint8)
+    rr.write_mp4(u8, str(OUT / "demo_sequence_60fps.mp4"))
+    grid([label(u8[i], f"{i / rr.FPS:.2f} s") for i in range(60, 150, 3)], 10).save(FIG / "demo_sequence.png")
+
+    src_of = lambda r: eq[r["image"]] if r["image"] >= 0 else None
+    stim = [r for r in rows if r["segment"] == "stimulus"]
+    sim = np.array([similarity(fr[r["frame"]], src_of(r)) for r in stim])
+    q = u8.astype(float) / 255
+    steps = np.abs(np.diff(fr, axis=0)).mean((1, 2))
+    joins = [n for n in range(1, len(rows)) if rows[n]["segment"] != rows[n - 1]["segment"] or rows[n]["cycle"] != rows[n - 1]["cycle"]]
+    spec_dev = [float(np.linalg.norm(np.abs(np.fft.fft2(f)) - amp) / np.linalg.norm(amp)) for f in fr]
+    spec_dev8 = [float(np.linalg.norm(np.abs(np.fft.fft2(f)) - amp) / np.linalg.norm(amp)) for f in q]
+    P = rr.period_frames(rr.F_EYES)
+    n = len(sim) // P
+    report = {
+        "frames": len(rows),
+        "float_mean_range": [float(fr.mean((1, 2)).min()), float(fr.mean((1, 2)).max())],
+        "float_rms_range": [float(fr.std((1, 2)).min()), float(fr.std((1, 2)).max())],
+        "float_amplitude_spectrum_max_rel_dev": max(spec_dev),
+        "uint8_mean_range": [round(float(q.mean((1, 2)).min()), 6), round(float(q.mean((1, 2)).max()), 6)],
+        "uint8_rms_range": [round(float(q.std((1, 2)).min()), 6), round(float(q.std((1, 2)).max()), 6)],
+        "uint8_amplitude_spectrum_max_rel_dev": round(max(spec_dev8), 5),
+        "similarity_to_source_at_peaks": [round(float(sim[k * P + P // 2]), 4) for k in range(n)],
+        "similarity_to_source_at_minima_max_abs": round(float(np.abs(sim[::P]).max()), 3),
+        "similarity_tag_frequency_hz": round(peak_hz(sim), 3),
+        "share_of_cycle_with_similarity_above_half": round(float((sim > 0.5).mean()), 3),
+        "largest_step_at_joins_vs_median_step": [round(float(steps[[j - 1 for j in joins]].max()), 4), round(float(np.median(steps)), 4)],
+        "region_contrast_modulation_at_tag_pct": {},
+        "pixels_outside_0_1": float(((fr < 0) | (fr > 1)).mean()),
+        "pixels_outside_0_1_sign_rule": float(((sign < 0) | (sign > 1)).mean()),
+        "corner_3x3_max_abs_z": {"circular": corner_z(fr), "sign_rule": corner_z(sign)},
+    }
+    s0, s1 = rows.index(stim[0]), rows.index(stim[-1]) + 1
+    for name, (r0, r1) in (("upper_160_rows", (0, 160)), ("lower_160_rows", (240, 400))):
+        sd = fr[s0:s1, r0:r1].std((1, 2))
+        report["region_contrast_modulation_at_tag_pct"][name] = round(100 * amp_at(sd, rr.F_EYES) / sd.mean(), 2)
+    return report
+
+
 if __name__ == "__main__":
     for p in (FACES, OUT, FIG):
         p.mkdir(parents=True, exist_ok=True)
-    rep = {"similarity_to_source_by_weight": figures(), "demo_trial": trial_and_checks()}
+    rep = {"similarity_to_source_by_weight": figures(), "demo_trial": trial_and_checks(),
+           "demo_sequence": sequence_and_checks()}
     (OUT / "verification.json").write_text(json.dumps(rep, indent=2))
     print(json.dumps(rep, indent=2))

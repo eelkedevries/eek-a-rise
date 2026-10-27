@@ -173,3 +173,54 @@ Figures: `figures/chessboard_full.png` and `figures/chessboard_on_grey.png` (sam
 grey scale, no rescaling). A full black-and-white board cannot be scrambled at the
 same contrast without about a third of its pixels leaving the displayable range,
 which is why the figures use a grey board.
+
+## 8. Corner artefacts of the sign rule, and the circular target (2026-10-27)
+
+Found while re-scoping to full images (specification 0.2).
+
+**Derived.** For a component with source phase `s` and a uniform random phase
+`R`, interpolated as `φ = a·s + (1 − a)·T`, the expected value of `e^{iφ}`
+decides what the expected frame looks like. With `b = 1 − a`:
+
+- plain interpolation (`T = R`): `E[e^{iφ}] = e^{ias} · sinc(b)`;
+- sign rule (`T = R + 2π·sign(s)` for a random half):
+  `E[e^{iφ}] = sinc(b) · cos(πb) · e^{i(as + πb·sign(s))}`;
+- circular target (`T = s + wrap(R − s) + 2π·m` for a random half, `m = ±1` at
+  random): `E[e^{iφ}] = sinc(b) · cos²(πb) · e^{is}`.
+
+Only the last is the source phase times a real factor, so only there is the
+expected frame the source scaled towards its mean, the same at every position.
+Averaged over source phases spread evenly over the circle, the mean of `cos φ` is
+`sin²(πa) / (π²ab)` for plain interpolation (0.41 at `a = 0.5`) and
+`−sin²(πb) · cos(πb) / (π²ab)` for the sign rule (+0.19 at `a = 0.3`, 0 at 0.5,
+−0.19 at `a = 0.75`). A positive mean of `cos φ` brightens the DFT origin, that
+is the four corners of the image (they wrap onto one another); a negative one
+darkens it.
+
+**Measured (reference).** Largest |z| (relative to the frame) among the 3 × 3
+pixels at the origin corner, signed as the corner pixel, mean over six noise
+draws:
+
+| Weight | 0.1 | 0.3 | 0.5 | 0.7 | 0.75 | 0.9 |
+|---|---|---|---|---|---|---|
+| Sign rule, demo face | 11 | 21 | −0.5 | −22 | −22.5 | −12 |
+| Circular, demo face | 0.0 | −0.2 | 0.0 | 0.0 | 0.1 | 0.1 |
+| Plain, demo face | 12.5 | 37 | 47 | 37 | 31.5 | 12.5 |
+
+Photographs gave the same pattern (sign rule up to 19 SD; circular below 1.3).
+In the default sequence (`reference_verification.json`, `demo_sequence`), the
+largest corner |z| over all frames is 24 for the sign rule and 3.9 for the
+circular target, and the clipped share falls from 4.5e-5 to 1.4e-7.
+
+**Measured (published clip).** The mean of the 4 × 4 pixels at the four corners
+stays within 1.8 SD of the frame mean in all 384 frames, and the corner pixels
+vary over time about as much as the rest of the image (temporal SD 12–13
+against a median of 14.6 grey levels). The original stimuli therefore did not have the
+corner artefact; how they avoided it is not reported.
+
+**Decision.** The circular target is the default; the sign rule remains as an
+option, verified against the golden data (`rise_200`), and is shown on the page
+for comparison. The circular target keeps the late emergence of RISE: in the
+default sequence the similarity to the source exceeds 0.5 for 34 % of each
+cycle (clip: about a third).
+

@@ -36,7 +36,7 @@ systems or future prompts.
    copier copy --trust --defaults --vcs-ref v0.3.0 \
      --skip AGENTS.md --skip CLAUDE.md --skip README.md --skip 'docs-dev/**' \
      --data project_name=eek-a-rise --data project_title=eek-a-rise \
-     --data description="Faces that emerge from noise: an in-browser implementation of the RISE compound-face stimuli of de Vries & Baldauf (2019)." \
+     --data description="Images that emerge from noise: an in-browser implementation of the RISE stimuli of de Vries & Baldauf (2019), for whole images." \
      --data stack_kind=node --data "stack=node-vite + typescript" \
      --data visibility=public --data static_site=true \
      --data license=MIT --data author="Eelke de Vries" --data year=2026 \

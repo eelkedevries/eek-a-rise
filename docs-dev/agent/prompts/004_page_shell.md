@@ -32,7 +32,7 @@ systems or future prompts.
 3. Structure `index.html` and `src/main.ts` into:
    - a header: title "eek-a-rise" and the lede "Faces that emerge from noise, while
      overall brightness and contrast stay the same.";
-   - *Try it*, with two tabs, *One image* and *Compound trial*, each with a short
+   - *Try it*, with two tabs, *One image* and *Sequence*, each with a short
      placeholder line ("Arrives in a later version.");
    - *How it works* (placeholder heading);
    - *About*, with the privacy text from
@@ -40,7 +40,8 @@ systems or future prompts.
      link to the source repository.
 4. Copy the 15 demo faces to `public/examples/faces/` and add
    `public/examples/manifest.json`: one entry per file with `file`, `identity`,
-   `band` (`eyes` or `mouth`), `expression` and a readable `label`.
+   `band` (`eyes` or `mouth`: the expression that differs, kept from the file
+   names), `expression` and a readable `label`.
 5. Add `src/examples/chessboards.ts`, which draws two 400 × 400 grey examples
    procedurally:
    - **chessboard:** 8 × 8 squares of 50 px, values 0.5 ± 0.5/3.8;
@@ -52,13 +53,14 @@ systems or future prompts.
 7. Add a gallery component used by both tabs, with the selected item
    highlighted. It shows thumbnails of the 15 faces (grouped by identity) and the
    visitor's uploads, plus the two chessboards in the One image tab only.
+   Images are whole images throughout; there is no division into parts.
 8. Update `docs-dev/planning/current_state.md` (*Systems*, *Prompts run*).
 
 ## Do not implement
 
 Do not implement:
 - any Fourier or RISE code, a worker, or canvas rendering beyond thumbnails;
-- the trial set-up, the player or the downloads;
+- the sequence set-up, the player or the downloads;
 - analytics, external fonts or any network request other than the page's own
   assets.
 
