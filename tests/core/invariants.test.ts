@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Prng, uniformArrays } from '../../src/core/prng';
-import { circularTarget, noisePhase, riseFrame, riseTarget, wrap } from '../../src/core/rise';
+import { circularTarget, cyclePeak, noisePhase, normaliseAmplitude, riseFrame, riseTarget, targets, wrap } from '../../src/core/rise';
 import { spectrum } from '../../src/core/spectrum';
 import { mean, rms } from '../../src/core/stats';
 import { cornerZ, pinkImage } from '../helpers/images';
@@ -43,6 +43,30 @@ describe('RISE invariants', () => {
       expect(y).toBeLessThan(Math.PI);
       expect(Math.abs(Math.cos(y) - Math.cos(x)) + Math.abs(Math.sin(y) - Math.sin(x))).toBeLessThan(1e-12);
     }
+  });
+
+  it('both half-cycle paths converge to the same partially scrambled peak', () => {
+    const other = noisePhase(prng.uniformArray(size * size), size, size);
+    for (const method of ['circular', 'sign'] as const) {
+      for (const peak of [0.05, 0.5, 0.85, 1]) {
+        const apex = cyclePeak(src, R, r, peak, size, size, method);
+        const on = targets[method](apex, R, r, size, size);
+        const off = targets[method](apex, other, r, size, size);
+        const a = riseFrame(amplitude, apex, on, 1 - 1e-7, size, size);
+        const b = riseFrame(amplitude, apex, off, 1 - 1e-7, size, size);
+        expect(Math.max(...a.map((v, i) => Math.abs(v - b[i])))).toBeLessThan(1e-5);
+      }
+    }
+  });
+
+  it('normalisation handles low-contrast spectra without subtractive cancellation and rejects flat images', () => {
+    const amp = new Float64Array(16);
+    amp[0] = 8;
+    amp[1] = amp[3] = 1e-9;
+    const scaled = normaliseAmplitude(amp, 0.4, 0.12);
+    expect(scaled[0] / 16).toBeCloseTo(0.4, 12);
+    expect(Math.hypot(...scaled.subarray(1)) / 16).toBeCloseTo(0.12, 12);
+    expect(() => normaliseAmplitude(new Float64Array([8, 0, 0, 0]), 0.5, 0.12)).toThrow(/uniform/);
   });
 });
 

@@ -1,37 +1,40 @@
 /** "For researchers" (explainer_texts.md, section 3, adapted for whole images) and the short notes of section 5. */
 
-export const title = 'Frequency tagging without luminance flicker';
+export const title = 'Frequency tagging with controlled global image statistics';
 
 export const method = [
-  'Steady-state paradigms commonly drive their tags with luminance or contrast modulation, which evokes strong responses in early visual cortex. Here the tag is carried by image content. Images are converted to greyscale, optionally cropped to an elliptical outline on a mean-grey background, and given the set-average Fourier amplitude spectrum, which equates mean luminance and RMS contrast exactly. Their visibility is then modulated with Random Image Structure Evolution (RISE; Sadr &amp; Sinha, 2004). The Fourier phase moves linearly from a random phase spectrum to the image’s own, so every frame keeps the common amplitude spectrum and therefore the same mean luminance and RMS contrast, up to 8-bit rounding.',
+  'Sequence mode replaces each image’s Fourier amplitude spectrum with the set average while keeping its phase, following the spectrum-matching principle described by Sadr and Sinha (2004) and implemented in SHINE (Willenbockel et al., 2010). This is not the full SHINE preprocessing pipeline: luminance histograms are not matched. RISE then changes phase with conjugate symmetry and the DC term preserved. Before display mapping, fixed amplitudes imply a fixed mean and population standard deviation by Parseval’s theorem. Here RMS contrast means the population standard deviation of grey values in [0, 1], rather than standard deviation divided by mean. Rounding and clipping can alter the exported statistics; the readouts and downloads report the actual 8-bit values.',
 ];
 
 /** The paragraph the parameter tags "this project" link to. */
 export const target =
-  'Each phase travels the shorter way round the circle, as in the minimum-distance interpolation of Ales et al. (2012), and a random half of the phases make one extra full turn in a random direction, so that the image stays hidden until about halfway and is recognisable for about a third of each cycle. Interpolating the raw phase values instead, with the extra turn following the sign of the image’s phase, avoids the bright corners of plain interpolation only at the halfway point: earlier the corners brighten, later they darken. The page offers that reading of Sadr and Sinha as an option; the example clip of the original study shows no such corners.';
+  'The default circular target combines shortest-path phase interpolation, described by Ales et al. (2012), with an additional full turn for a random half of conjugate pairs. This combination is a project adaptation, not a verbatim implementation of either paper. The sign-rule option implements the extra-turn rule described by Sadr and Sinha (2004); plain raw-angle interpolation omits those turns. The comparisons show position-specific artefacts in these alternatives. Phase weight is not a percentage of perceptual visibility, and recognisability depends on the image and observer.';
 
 /** The paragraph the parameter tags "clip" and "assumption" link to. */
 export const inferredIntro =
-  'The procedure follows de Vries and Baldauf (2019), who applied it to separate eye and mouth bands of a compound face; this page applies it to whole images only. Three parameters are not reported in the paper and were inferred from its published example clip:';
+  'De Vries and Baldauf (2019) report 400 × 400 px images, eye and mouth tags of 2.00 and 1.33 Hz, identity changes at 0.66 Hz, and trial segments of 1.0, 4.5 and 0.5 s. They describe sinusoidal emergence and disappearance, but do not report the exact phase trajectory or maximum interpolation weight. This page adapts the method to whole images. Additional choices are:';
 
 export const inferred = [
-  'a 60 Hz frame rate (adjustable here);',
-  'a raised-cosine interpolation weight from pure noise to the full image;',
-  'a new noise end-point every half cycle.',
+  '60 frames/s, inferred from the published clip’s frame sequence and the reported experimental rates;',
+  'a raised-cosine envelope, consistent with the reported sinusoidal modulation but not a measured visibility function;',
+  'peak weight 0.85, chosen here to retain scrambled texture at maximum visibility; this is not an estimate of the paper’s peak weight;',
+  'one shared partially scrambled peak for both halves of a cycle, with different noise end-points before and after it. The two paths meet continuously, including when the peak is below 1.',
 ];
 
 export const caveats =
-  'Some caveats apply. Whole-image statistics are constant, but local statistics are not: a face concentrates its contrast in some regions, whereas noise spreads it evenly, so the contrast of any part of the image changes as the image emerges (by about 7–10 % for the upper and lower 160 rows of the demo faces). With the extra turns, the visibility waveform is narrower than a sinusoid and carries harmonics of the tag frequency. Emerging phase structure also forms local edges that early visual cortex encodes. Constant global statistics reduce low-level confounds; they do not remove them. Finally, the statistics are defined in pixel values: on the screen they hold for luminance only on a display that is linearised (gamma-corrected) or measured.';
+  'Local statistics and edges still change, and phase noise is not guaranteed to remove every recognisable cue from every input. The extra turns and the nonlinear relationship between phase and recognition can introduce harmonics and non-monotonic changes in similarity. Sadr and Sinha describe rejecting non-monotonic trajectories; that selection step is not implemented here. The original study combined separately modulated image bands, so global invariance of the full-image algorithm does not imply invariance of every band or of its compound display. Finally, pixel statistics describe physical luminance only when the display transfer function is linearised or measured. Use the measured PNG frames and validate timing and luminance on the experimental display.';
 
 export const demoFigure = {
   src: 'figures/demo_sequence.webp',
   width: 2000,
   height: 600,
   alt: 'Thirty frames of the default sequence in three rows: three faces, each emerging from noise and dissolving into it.',
-  caption: 'The first 1.5 s of the default sequence after the baseline (1.0–2.5 s), every third frame: three faces, each emerging from and dissolving into noise.',
+  caption: 'The first 1.5 s after the baseline (1.0–2.5 s), every third frame. The default peak weight of 0.85 leaves phase noise visible around each face even at the peak.',
 };
 
 export const publishedClip =
-  'The example clip published with the paper plays at 5/6 of the experiment’s speed, because frames made for a 60 Hz display were saved at 50 frames per second.';
+  'The published sequence contains 360 frames, encoded at 50 frames/s. Presenting those frames at the inferred experimental rate of 60 frames/s gives the reported 6 s trial. At its encoded rate the sequence runs at 5/6 of that speed; the experimental tag rates describe the experiment, rather than the video playback.';
 
-export const clipUrl = 'https://figshare.com/s/f8a1e2760937ca35c4f0';
+export const clipUrl = 'https://figshare.com/s/f8a1e2760937ca35c4f0?file=9742972';
+export const clipVideoUrl = 'https://eelkedevries.com/blog/frequency-tagged-face-stimuli/trento_stimulus.mp4';
+export const blogUrl = 'https://eelkedevries.com/blog/frequency-tagged-face-stimuli/';

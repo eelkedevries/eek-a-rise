@@ -30,7 +30,8 @@ export function parametersJson({ built, settings, imageNames, created }: ExportI
   const counts = frameCounts({ ...settings, nImages: imageNames.length });
   const [meanLo, meanHi] = range(built.stats.mean);
   const [rmsLo, rmsHi] = range(built.stats.rms);
-  const peaks = built.rows.filter((r) => r.segment === 'stimulus' && r.weight === settings.peak).map((r) => built.stats.similarity[r.frame]);
+  const sampledPeak = Math.max(...built.rows.map((r) => r.weight));
+  const peaks = built.rows.filter((r) => r.segment === 'stimulus' && r.weight === sampledPeak).map((r) => built.stats.similarity[r.frame]);
   const parameters = {
     app: 'eek-a-rise',
     version: __APP_VERSION__,
@@ -48,7 +49,10 @@ export function parametersJson({ built, settings, imageNames, created }: ExportI
     post_s: settings.postS,
     frames: { baseline: counts.baseline, stimulus: counts.stimulus, post: counts.post, total: built.rows.length },
     peak_weight: settings.peak,
+    sampled_peak_weight: sampledPeak,
     weight: 'peak * (0.5 - 0.5 * cos(2 * pi * p / period)), p = frame within the cycle',
+    phase_path: 'one shared peak phase, made at peak_weight on the source-to-onset-noise path; both halves interpolate between this peak and their noise endpoint at weight / peak_weight',
+    peak_provenance: 'project parameter; 0.85 retains residual phase noise in the demonstration, not an estimate of the published stimulus',
     image_size_px: settings.size,
     outline_ellipse: settings.outline ? { ...settings.ellipse, units: 'fractions of the image size' } : null,
     spectrum_matching: 'every image gets the set-average amplitude spectrum and keeps its own phase',
@@ -58,7 +62,7 @@ export function parametersJson({ built, settings, imageNames, created }: ExportI
     clipped_share: built.clippedShare,
     images: imageNames,
     measured: {
-      note: 'from the 8-bit frames (values / 255), fixation cross excluded; similarity is the Pearson correlation with the prepared source image of each cycle',
+      note: 'from the 8-bit frames (values / 255), fixation cross excluded; RMS contrast is population SD, not SD / mean; similarity is the Pearson correlation with the prepared source image of each cycle',
       mean_range: [round(meanLo), round(meanHi)],
       rms_contrast_range: [round(rmsLo), round(rmsHi)],
       similarity_at_peaks_min: peaks.length ? round(Math.min(...peaks), 4) : null,
@@ -97,14 +101,19 @@ Presentation
   frame (or a fixed whole number of refreshes per frame), and record dropped
   frames. Check the timing of the first frames with a photodiode.
 
-  The tag frequency is ${settings.tagHz} Hz: each of the ${imageNames.length} image(s) emerges from noise and
-  dissolves into it once every ${frameCounts({ ...settings, nImages: imageNames.length }).period} frames.
+  The tag frequency is ${settings.tagHz} Hz: one image emerges from noise and
+  dissolves into it every ${frameCounts({ ...settings, nImages: imageNames.length }).period} frames. Cycle k shows image
+  floor(k / ${settings.cyclesPerImage}) modulo ${imageNames.length}, counting from zero.
 
 Brightness and contrast
-  Mean and RMS contrast are equal in every frame in pixel values (see
-  frame_stats.csv). On a screen they are equal in luminance only if the display
-  is linearised (gamma-corrected) or measured. Local contrast still changes as
+  Before 8-bit mapping, mean and RMS contrast (population SD of grey values,
+  not SD / mean) are constant. Rounding and clipping can change these statistics;
+  frame_stats.csv reports the exported values. On a screen, luminance statistics
+  also depend on display calibration. Local contrast and edges still change as
   the images emerge.
+
+  Peak weight ${settings.peak} defines a common peak phase for both halves of each
+  cycle. Below 1, residual phase noise remains even at maximum visibility.
 
 Lossless frames and video
   PNG frames are lossless: use them for research. A compressed video changes

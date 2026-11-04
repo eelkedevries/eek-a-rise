@@ -11,7 +11,8 @@ converted to grey (Rec. 601 luma), cropped to a centred square and shown at
 
 - **Weight** moves from noise (0) to the image (1).
 - **Play** runs one emerge–dissolve cycle per second, frames chosen by elapsed
-  time.
+  time, with a maximum weight of 0.85 so scrambled texture remains at the peak.
+  Move the slider to 1 to inspect the fully restored source.
 - **New noise** draws a new random phase spectrum; its seed is shown.
 - **Method**: *RISE* (the default, see below), *Sign rule* (Sadr and Sinha's
   2π step read literally) or *Plain interpolation*. The last two brighten (and,
@@ -24,7 +25,10 @@ converted to grey (Rec. 601 luma), cropped to a centred square and shown at
 
 A sequence is: noise, then each image emerging from noise and dissolving into it
 once per cycle, then noise again. Every frame has the same amplitude spectrum,
-hence the same mean luminance and RMS contrast.
+hence the same pixel mean and RMS contrast (population SD) before rounding and clipping.
+The 0.85 default retains residual phase noise at maximum visibility; setting 1
+restores the source, including any flat grey background. Both halves meet at
+one common peak phase, even when the peak is below 1.
 
 1. **Images, in order.** The nine eye-expression demo faces by default. Click a
    thumbnail to add it; reorder or remove with the arrows and ×; *Reset to demo
@@ -41,7 +45,7 @@ hence the same mean luminance and RMS contrast.
    | Tag frequency | 2 Hz (30 frames) | paper (eye band) |
    | Cycles per image | 1 | paper (a new expression every eye cycle) |
    | Noise before, images, noise after | 1.0, 4.5, 0.5 s | paper |
-   | Peak weight | 1 (the full image) | assumption, supported by the clip |
+   | Peak weight | 0.85 (residual phase noise) | project choice; not a published estimate |
    | Method | RISE (circular target) | this project |
    | Mean and RMS contrast | the set's own | assumption |
    | Fixation cross | off | this project |
@@ -86,15 +90,21 @@ path/to/eek-a-rise_<seed>.zip` (see `validation.md`). To check a video:
   once per frame, log dropped frames, and verify the timing of the first frames
   with a photodiode (Bridges et al., 2020, found sub-millisecond precision for
   Psychtoolbox and PsychoPy in the lab, but display lag is invisible to software).
-- **Gamma.** Mean and RMS contrast are equal in pixel values. On a screen they are
-  equal in luminance only on a linearised (gamma-corrected) or measured display.
+- **Gamma and pixel mapping.** The Fourier invariants apply before rounding and
+  clipping; the download reports the actual 8-bit values. Physical luminance
+  additionally depends on the display transfer function, which must be linearised
+  (gamma-corrected) or measured.
 - **Background.** Present the frames on a background of the frames' mean grey
   (`parameters.json`, `measured.mean_range`), so that the edge of the image does
   not add a luminance step.
-- **Local statistics.** Whole-image statistics are constant; the contrast of any
-  region changes as the image emerges (about 7–10 % for the upper and lower
-  160 rows of the demo faces). Analyse harmonics of the tag frequency, and
-  consider controls such as phase-scrambled or inverted images.
+- **Local statistics.** Local contrast, edges and pixel histograms can change.
+  Phase weight and image correlation are not percentages of recognisability.
+  Analyse harmonics and consider controls such as phase-scrambled or inverted images.
+
+The original video under *How it works* has separate eye and mouth bands, unlike
+the whole-image tool. It loads only when played and includes links to its
+[Figshare record](https://figshare.com/s/f8a1e2760937ca35c4f0?file=9742972) and
+[related blog post](https://eelkedevries.com/blog/frequency-tagged-face-stimuli/).
 
 The two loops below show the pattern. They were written for this page but not
 run here; check them on your own set-up.

@@ -1,5 +1,6 @@
 /** The One image tab: a weight slider, a play loop and live readouts of mean and RMS contrast. */
 import { applyOutline, DEFAULT_ELLIPSE, prepareImage } from '../core/preprocess';
+import { DEMO_PEAK } from '../core/rise';
 import type { ImageItem } from '../state';
 import { RiseWorker } from '../worker/client';
 import type { FrameResult, OneImageMethod, SourceStats } from '../worker/protocol';
@@ -97,7 +98,7 @@ export function mountOneImage(root: HTMLElement, status: (message: string, error
     const mine = version;
     if (!cycle) {
       playButton.textContent = 'Preparing…';
-      cycle = await worker.cycle(PLAY_FRAMES);
+      cycle = await worker.cycle(PLAY_FRAMES, DEMO_PEAK);
       if (playing) playButton.textContent = 'Pause';
     }
     if (mine !== version || !playing) return;

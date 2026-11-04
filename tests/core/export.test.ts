@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { buildSequence } from '../../src/core/build';
 import { scheduleCsv } from '../../src/core/schedule';
 import { mean, rms } from '../../src/core/stats';
-import { frameStatsCsv } from '../../src/export/params';
+import { frameStatsCsv, parametersJson } from '../../src/export/params';
 import { makeZip } from '../../src/export/zip';
 import { DEFAULT_SETTINGS, type SequenceSettings } from '../../src/state';
 import { DEMO_SEQUENCE, demoFaces } from '../helpers/images';
@@ -59,5 +59,14 @@ describe('PNG ZIP export', () => {
       expect(Math.abs(mean(values) - m)).toBeLessThan(1e-6);
       expect(Math.abs(rms(values) - s)).toBeLessThan(1e-6);
     });
+  });
+
+  it('reports the sampled peak and its similarity for odd-length periods', () => {
+    const odd = { ...settings, tagHz: 60 / 31, stimulusS: 31 / 60, fixation: false };
+    const b = buildSequence({ images: demoFaces(names, odd.size), size: odd.size, params: odd, method: odd.method, normalise: null, seed: odd.seed, fixation: false });
+    const p = JSON.parse(parametersJson({ built: b, settings: odd, imageNames: names, created: '2026-11-04T00:00:00.000Z' }));
+    expect(p.sampled_peak_weight).toBeLessThan(odd.peak);
+    expect(p.measured.similarity_at_peaks_min).toBeTypeOf('number');
+    expect(p.phase_path).toContain('shared peak phase');
   });
 });

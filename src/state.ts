@@ -1,5 +1,6 @@
 import { DEFAULT_ELLIPSE, type Ellipse } from './core/preprocess';
 import type { Method } from './core/rise';
+import { DEMO_PEAK } from './core/rise';
 import { CHESSBOARD_SIZE, chessboard, chessboardOnGrey } from './examples/chessboards';
 import { decodeUpload } from './image-input';
 
@@ -154,7 +155,7 @@ export const DEFAULT_SETTINGS: SequenceSettings = {
   baselineS: 1,
   stimulusS: 4.5,
   postS: 0.5,
-  peak: 1,
+  peak: DEMO_PEAK,
   method: 'circular',
   normalise: false,
   normMean: 0.5,
@@ -169,7 +170,13 @@ const STORAGE_KEY = 'eek-a-rise:sequence-settings';
 export function loadSettings(): SequenceSettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw), ellipse: { ...DEFAULT_ELLIPSE, ...JSON.parse(raw).ellipse } };
+    if (raw) {
+      const saved = JSON.parse(raw);
+      // Move the previous default to the textured demonstration once; keep
+      // custom partial peaks and subsequent deliberate choices of weight 1.
+      if (saved.defaultsVersion !== 2 && saved.peak === 1) saved.peak = DEMO_PEAK;
+      return { ...DEFAULT_SETTINGS, ...saved, ellipse: { ...DEFAULT_ELLIPSE, ...saved.ellipse } };
+    }
   } catch {
     // Storage may be unavailable (private windows, blocked site data); the defaults apply.
   }
@@ -178,7 +185,7 @@ export function loadSettings(): SequenceSettings {
 
 export function saveSettings(settings: SequenceSettings): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...settings, defaultsVersion: 2 }));
   } catch {
     // Preferences are a convenience; nothing depends on them being kept.
   }

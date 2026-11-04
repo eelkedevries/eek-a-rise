@@ -135,7 +135,7 @@ with open(OUT / "sequence_64_schedule.csv", "w", newline="") as fh:
         w.writerow({k: (f"{v:.12f}" if isinstance(v, float) else v) for k, v in row.items()})
 case("sequence_64", "Sequence(images, fps=60, f_tag=10, baseline 0.1 s, stimulus 0.4 s, post 0.05 s, "
      "cycles_per_image=1, peak=0.9, normalise=(0.5, 0.12), method='circular').render(uniform): the uniform arrays in draw order "
-     "(R[0..K+2], onset r, offset r, baseline r, post r), the frames and the schedule",
+     "(R[0..K+2], onset r, offset r, baseline r, post r), the frames with a shared partial peak, and the schedule",
      {"max_abs": 1e-9, "schedule": "weights_max_abs 1e-12, other columns exact"},
      inputs=save("sequence_64_in", np.stack(imgs), np.uint8), uniforms=save("sequence_64_u", np.stack(draws), np.uint32),
      frames=save("sequence_64_frames", seq_frames, np.float64), schedule={"file": "sequence_64_schedule.csv"})

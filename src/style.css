@@ -832,3 +832,13 @@ progress {
   font-size: 0.92rem;
   overflow-wrap: anywhere;
 }
+
+.published-video {
+  display: block;
+  width: min(100%, 400px);
+  height: auto;
+  aspect-ratio: 1;
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}

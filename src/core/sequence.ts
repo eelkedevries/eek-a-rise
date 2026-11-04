@@ -8,7 +8,7 @@
  * r for k = 0..K-1, the offset targets' r, then the baseline and post targets' r.
  */
 import { fromSpectrum, spectrum } from './spectrum';
-import { meanAmplitude, noisePath, noisePhase, normaliseAmplitude, riseFrame, targets, type Method } from './rise';
+import { cyclePeak, meanAmplitude, noisePath, noisePhase, normaliseAmplitude, riseFrame, targets, type Method } from './rise';
 import { frameCounts, schedule, type Row, type ScheduleParams } from './schedule';
 
 export interface SequenceSetup {
@@ -61,6 +61,9 @@ export function* renderSequence(setup: SequenceSetup, uniformAt: (index: number)
   const target = targets[method];
 
   const matched = meanAmplitude(images, n, n);
+  if (!matched.subarray(1).some((v) => v > Number.EPSILON * Math.abs(matched[0]))) {
+    throw new Error('The images are uniform and cannot emerge from phase noise. Choose an image with visible detail.');
+  }
   const amp = setup.normalise ? normaliseAmplitude(matched, setup.normalise.mean, setup.normalise.rms) : matched;
   // The source phase is taken from the spectrum-matched image, as the reference does.
   const source = recent(2, (k) => {
@@ -75,6 +78,7 @@ export function* renderSequence(setup: SequenceSetup, uniformAt: (index: number)
   let cycle = -1;
   let tOn: Float64Array | null = null;
   let tOff: Float64Array | null = null;
+  let peakPhase: Float64Array | null = null;
 
   for (const row of rows) {
     if (row.segment === 'baseline') {
@@ -90,12 +94,14 @@ export function* renderSequence(setup: SequenceSetup, uniformAt: (index: number)
       const src = source(row.image);
       if (k !== cycle) {
         cycle = k;
-        tOn = target(src.phase, noise(k + 1), uniformAt(K + 3 + k), n, n);
+        const rOn = uniformAt(K + 3 + k);
+        peakPhase = cyclePeak(src.phase, noise(k + 1), rOn, setup.params.peak, n, n, method);
+        tOn = target(peakPhase, noise(k + 1), rOn, n, n);
         tOff = null;
       }
-      if (row.half === 'off') tOff ??= target(src.phase, noise(k + 2), uniformAt(2 * K + 3 + k), n, n);
+      if (row.half === 'off') tOff ??= target(peakPhase!, noise(k + 2), uniformAt(2 * K + 3 + k), n, n);
       const t = row.half === 'on' ? tOn! : tOff!;
-      yield { row, frame: riseFrame(amp, src.phase, t, row.weight, n, n), source: src.eq };
+      yield { row, frame: riseFrame(amp, peakPhase!, t, row.weight / setup.params.peak, n, n), source: src.eq };
     }
   }
 }

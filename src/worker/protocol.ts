@@ -25,7 +25,7 @@ export interface FrameResult {
 export type Request =
   | { id: number; type: 'prepare'; image: Float64Array; size: number; seed: number; method: OneImageMethod }
   | { id: number; type: 'frame'; a: number }
-  | { id: number; type: 'cycle'; n: number }
+  | { id: number; type: 'cycle'; n: number; peak: number }
   | { id: number; type: 'build'; options: BuildOptions }
   | { id: number; type: 'zip'; info: ExportInfo };
 

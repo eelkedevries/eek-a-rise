@@ -1,5 +1,7 @@
 # Explainer texts
 
+> Updated scientific claims and defaults: see `docs/scientific-audit.md` and specification 1.1 (2026-11-04). Historical clip inferences and demo measurements below do not establish a published maximum phase weight or general perceptual thresholds.
+
 Approved wording for the public page, written with the owner on 2026-10-27, and
 the rules any new public text must follow. British English, no contractions,
 house writing style. Section 1 is the owner's blog post about the published clip;

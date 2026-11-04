@@ -1,5 +1,7 @@
 # Science background
 
+> Updated scientific claims and defaults: see `docs/scientific-audit.md` and specification 1.1 (2026-11-04). Historical clip inferences and demo measurements below do not establish a published maximum phase weight or general perceptual thresholds.
+
 Non-binding background for eek-a-rise: what the paper reports, how RISE works,
 what the published clip shows, and how the reference implementation was checked.
 The binding algorithm is in `../primary_authoritative/specification.md`.

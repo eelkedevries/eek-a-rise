@@ -25,6 +25,17 @@ export function renderHowItWorks(section: HTMLElement): void {
     `<div class="prose">
       <h3>${general.title}</h3>
       ${paragraphs(general.intro)}
+      <figure class="figure published-example">
+        <h3>Original study: example trial</h3>
+        <video class="published-video" controls playsinline preload="none" width="400" height="400" aria-label="Original compound face stimulus from de Vries and Baldauf (2019)" aria-describedby="published-example-caption">
+          <source src="${expert.clipVideoUrl}" type="video/mp4" />
+          <a href="${expert.clipUrl}">Watch or download the original example on Figshare</a>.
+        </video>
+        <figcaption id="published-example-caption">The original stimulus uses separate eye and mouth bands with a strip of scrambled noise between them. The interactive tool above uses whole images. ${expert.publishedClip}
+          <a href="${expert.clipUrl}">Original video on Figshare</a> ·
+          <a href="${expert.blogUrl}">Read the blog post about the study</a>.
+        </figcaption>
+      </figure>
       ${figure(general.figures.chessboard)}
       ${paragraphs(general.afterChessboard)}
       ${figure(general.figures.rise)}
@@ -38,7 +49,7 @@ export function renderHowItWorks(section: HTMLElement): void {
         <ul>${expert.inferred.map((t) => `<li>${t}</li>`).join('')}</ul>
         <p>${expert.caveats}</p>
         ${figure(expert.demoFigure)}
-        <p>${expert.publishedClip} <a href="${expert.clipUrl}">The published clip</a>.</p>
+        <p><a href="${expert.clipUrl}">Published stimulus and source record</a> · <a href="${expert.blogUrl}">Blog post about the study</a>.</p>
       </details>
       <h3 id="references">References</h3>
       <ul class="references">${references.map((r) => `<li>${r.text} <a href="https://doi.org/${r.doi}">https://doi.org/${r.doi}</a></li>`).join('')}</ul>

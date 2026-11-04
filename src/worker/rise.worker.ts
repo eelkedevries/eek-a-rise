@@ -64,7 +64,7 @@ function handle(request: Request): [Result, Transferable[]] {
     }
     case 'cycle': {
       const results: FrameResult[] = [];
-      for (let j = 0; j < request.n; j++) results.push(frame(0.5 - 0.5 * Math.cos((2 * Math.PI * j) / request.n)));
+      for (let j = 0; j < request.n; j++) results.push(frame(request.peak * (0.5 - 0.5 * Math.cos((2 * Math.PI * j) / request.n))));
       return [results, results.map((r) => r.pixels.buffer)];
     }
   }

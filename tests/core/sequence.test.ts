@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildSequence, peakFrequency, type BuildOptions } from '../../src/core/build';
 import { uniformArrays } from '../../src/core/prng';
-import { meanAmplitude } from '../../src/core/rise';
+import { DEMO_PEAK, meanAmplitude } from '../../src/core/rise';
 import { renderSequence, uniformCount } from '../../src/core/sequence';
 import { spectrum } from '../../src/core/spectrum';
-import { mean, rms } from '../../src/core/stats';
+import { correlation, mean, rms } from '../../src/core/stats';
 import { cornerZ, DEMO_SEQUENCE, demoFaces } from '../helpers/images';
 
 // A reduced default sequence: the nine demo faces at 128 × 128, 2 Hz at 60 frames/s,
@@ -115,5 +115,45 @@ describe('reproducibility', () => {
     // The cross hides a few changing pixels (about 0.1 % of them at 128 px), so the
     // mean of the rest varies by their share; it stays within 1e-3.
     for (let n = 0; n < crossed.rows.length; n++) expect(Math.abs(crossed.stats.mean[n] - crossed.stats.mean[0])).toBeLessThan(1e-3);
+  });
+});
+
+describe('residual-noise demonstration', () => {
+  const partial = { ...options, params: { ...options.params, peak: DEMO_PEAK } };
+
+  it('retains texture outside the face throughout every cycle and preserves global statistics', () => {
+    const amp = meanAmplitude(images, SIZE, SIZE);
+    const at = uniformArrays(partial.seed, uniformCount(partial), SIZE * SIZE);
+    let referenceMean = 0, referenceRms = 0;
+    for (const { row, frame, source } of renderSequence(partial, at)) {
+      if (row.frame === 0) { referenceMean = mean(frame); referenceRms = rms(frame); }
+      expect(Math.abs(mean(frame) - referenceMean)).toBeLessThan(1e-10);
+      expect(Math.abs(rms(frame) - referenceRms)).toBeLessThan(1e-10);
+      // Left and right strips lie outside all three synthetic face outlines.
+      const outside = frame.filter((_, i) => i % SIZE < 8 || i % SIZE >= SIZE - 8);
+      expect(rms(outside), `background at frame ${row.frame}`).toBeGreaterThan(0.01);
+      if (row.weight === DEMO_PEAK) {
+        expect(correlation(frame, source)).toBeGreaterThan(0.5);
+        expect(correlation(frame, source)).toBeLessThan(0.99);
+        const measured = spectrum(frame, SIZE, SIZE).amplitude;
+        expect(Math.max(...measured.map((v, i) => Math.abs(v - amp[i]))) / amp[0]).toBeLessThan(1e-9);
+      }
+    }
+  });
+
+  it('has no abrupt peak switch, including odd-length periods', () => {
+    for (const period of [29, 30, 31]) {
+      const o = { ...partial, params: { ...partial.params, tagHz: 60 / period, baselineS: 0, stimulusS: period / 60, postS: 0 } };
+      const b = buildSequence(o);
+      const changes = b.rows.slice(1).map((_, j) => {
+        const prev = b.frames.subarray(j * SIZE * SIZE, (j + 1) * SIZE * SIZE);
+        const next = b.frames.subarray((j + 1) * SIZE * SIZE, (j + 2) * SIZE * SIZE);
+        return prev.reduce((s, v, i) => s + Math.abs(v - next[i]), 0) / prev.length;
+      });
+      const median = [...changes].sort((a, b) => a - b)[Math.floor(changes.length / 2)];
+      for (let j = Math.floor(period / 2) - 2; j <= Math.ceil(period / 2); j++) {
+        expect(changes[j], `period ${period}, peak step ${j}`).toBeLessThan(median);
+      }
+    }
   });
 });

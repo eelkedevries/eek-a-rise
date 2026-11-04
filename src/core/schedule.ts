@@ -12,7 +12,7 @@ export interface ScheduleParams {
   postS: number;
   cyclesPerImage: number;
   nImages: number;
-  /** Interpolation weight at the top of each cycle, in (0, 1]. */
+  /** Source-to-noise interpolation weight defining the shared peak, in (0, 1]. */
   peak: number;
 }
 
@@ -85,7 +85,7 @@ export function frameCounts(p: ScheduleParams): Frames {
   return { baseline, stimulus, post, period, cycles: stimulus / period };
 }
 
-/** Raised-cosine interpolation weight at frame p of a cycle of `period` frames (0 at p = 0). */
+/** Raised-cosine envelope; rendering uses weight / peak on each path to the shared peak. */
 export function weight(p: number, period: number, peak: number): number {
   const aMin = 0.0;
   return aMin + (peak - aMin) * (0.5 - 0.5 * Math.cos((2 * Math.PI * p) / period));

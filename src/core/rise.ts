@@ -7,6 +7,9 @@ import { antisymmetric, fromSpectrum, layout, spectrum } from './spectrum';
 
 const TWO_PI = 2 * Math.PI;
 
+/** Demonstration choice: retain phase noise even at maximum visibility. Not a published estimate. */
+export const DEMO_PEAK = 0.85;
+
 /** Angle in [-pi, pi), written with floor so that every IEEE implementation agrees bit for bit. */
 export function wrap(x: number): number {
   return x - 2 * Math.PI * Math.floor((x + Math.PI) / (2 * Math.PI));
@@ -56,6 +59,18 @@ export type Method = 'circular' | 'sign';
 
 export const targets: Record<Method, typeof circularTarget> = { circular: circularTarget, sign: riseTarget };
 
+/**
+ * One common apex for the two halves of a cycle. At peak < 1 the apex is a
+ * partially scrambled source, not two different partially scrambled frames.
+ * Reuse the onset noise and random array so no new random draws are needed.
+ */
+export function cyclePeak(src: Float64Array, noise: Float64Array, r: Float64Array, peak: number, height: number, width: number, method: Method): Float64Array {
+  if (peak === 1) return src;
+  const target = targets[method](src, noise, r, height, width);
+  const phase = src.map((v, i) => wrap(peak * v + (1 - peak) * target[i]));
+  return antisymmetric(phase, height, width);
+}
+
 /** Plain interpolation: the sign rule without any extra turn (r = 1 everywhere). */
 export function plainTarget(src: Float64Array, rand: Float64Array, height: number, width: number): Float64Array {
   return riseTarget(src, rand, new Float64Array(src.length).fill(1), height, width);
@@ -98,9 +113,13 @@ export function specMatch(images: readonly Float64Array[], height: number, width
 /** Amplitude spectrum with the given mean (DC) and RMS contrast (Parseval); one linear map for every frame. */
 export function normaliseAmplitude(amp: Float64Array, mean: number, rms: number): Float64Array {
   const n = amp.length;
+  if (!(mean > 0 && mean < 1 && rms > 0 && Number.isFinite(rms))) throw new Error('Choose a mean between 0 and 1 and a positive, finite RMS contrast.');
+  // Sum the non-DC energy directly: subtracting two large, nearly equal sums
+  // loses precision for low-contrast images and is undefined for flat images.
   let sum = 0;
-  for (let i = 0; i < n; i++) sum += amp[i] * amp[i];
-  const ac = Math.sqrt(sum - amp[0] * amp[0]);
+  for (let i = 1; i < n; i++) sum += amp[i] * amp[i];
+  const ac = Math.sqrt(sum);
+  if (ac <= Number.EPSILON * Math.abs(amp[0])) throw new Error('A uniform image has no contrast to scale. Choose an image with visible detail.');
   const scale = (rms * n) / ac;
   const out = amp.map((v) => v * scale);
   out[0] = mean * n;

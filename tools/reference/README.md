@@ -10,6 +10,7 @@ on the golden data; the binding definitions are in
 | `make_golden.py` | writes `golden/` (inputs stored exactly; manifest with tolerances) |
 | `make_assets.py` | writes `demo-faces/` (15 synthetic faces), figures, a demo trial, a demo sequence and `out/verification.json` |
 | `verify_export.py` | checks a downloaded PNG ZIP independently: constant mean, RMS contrast and amplitude spectrum, content at the tag frequency |
+| `audit_demo.py` | measures the current residual-noise demo with NumPy, checks texture throughout, and regenerates its explanatory figure |
 | `golden/` | test data for the TypeScript port; see `golden/manifest.json` |
 | `demo-faces/` | example images for the page: 3 invented identities, 3 eye and 2 mouth expressions each |
 

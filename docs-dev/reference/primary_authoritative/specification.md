@@ -1,6 +1,6 @@
 # Specification
 
-**Version:** 1.0 · **Last updated:** 2026-10-27
+**Version:** 1.1 · **Last updated:** 2026-11-04
 
 The authoritative design canon for this project. **Only filled sections are
 binding.** An empty or stubbed section means "not yet decided", not a
@@ -25,12 +25,14 @@ Changes:
   check, the end-to-end check, and Ales et al. (2012) as the precedent for
   shortest-way phase interpolation.
 
+- 1.1 (owner’s requests of 2026-11-04): scientific audit; default peak 0.85 with a shared partially scrambled apex; stable contrast normalisation; original video and blog link. The peak is a project choice, not an estimate from the published clip.
+
 ## Scope
 
 eek-a-rise is a public web page at <https://eelkedevries.com/eek-a-rise/> that
 makes whole images emerge from, and dissolve into, phase noise with the RISE
-procedure, while the whole-image mean luminance, RMS contrast and amplitude
-spectrum stay constant, and builds frequency-tagged sequences of such images for
+procedure, while the whole-image pixel mean, RMS contrast (population SD) and amplitude
+spectrum stay constant before 8-bit rounding and clipping, and builds frequency-tagged sequences of such images for
 experiments. Everything runs in the visitor's browser.
 
 In v1:
@@ -129,8 +131,7 @@ size S × S (400 × 400 by default).
   half make one extra full turn, in a random direction independent of the source.
   The expected frame at weight `a` is then the source's deviation from its mean
   times `sinc(1 − a) · cos²(π(1 − a))`, the same at every position; the image
-  stays noise-like until about `a = 0.5` and is recognisable for about a third
-  of a raised-cosine cycle, as in the published clip.
+  has little correlation with the source near `a = 0.5`. This expectation is not a perceptual visibility function. The combination of shortest-path interpolation and extra turns is a project adaptation, not the exact method of either cited paper.
 - **Sign rule (option, the reading of 0.1):**
   `target = R + pick · 2π · sign(src)`. Raw phase values in (−π, π] are
   interpolated and the extra turn follows the sign of the source phase. Both
@@ -161,13 +162,12 @@ size S × S (400 × 400 by default).
   Off by default for the sequence (the demo faces are already on a mean
   background).
 - **Spectrum matching:** every image of a sequence receives the mean amplitude
-  spectrum of the set and keeps its own phase (`specMatch`). This equates mean
-  luminance and RMS contrast exactly. It stands in for SHINE's luminance and
-  spectrum matching; SHINE's 0–255 clipping is not reproduced.
+  spectrum of the set and keeps its own phase (`specMatch`). This equates
+  pixel mean and RMS contrast exactly before display mapping. It implements the spectrum-matching principle, not the full SHINE pipeline: histogram matching and SHINE's 0–255 clipping are not reproduced.
 - **Normalisation (optional):** `normaliseAmplitude(amp, mean, rms)` sets the DC
   term to `mean · S²` and scales every other amplitude so that the RMS contrast
   (population standard deviation) is `rms`. It is one linear map for every frame,
-  so all invariants hold. Off by default (the set's own mean and contrast).
+  so all invariants hold. Non-DC energy is summed directly to avoid subtractive cancellation; a zero-contrast spectrum cannot be scaled to positive contrast and is rejected. Uniform input sets are rejected before sequence rendering. Off by default (the set's own mean and contrast).
 
 ### Sequence schedule (`schedule`)
 
@@ -184,8 +184,9 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
 - Stimulus frame `i = n − nb`: cycle `k = floor(i / P)`, position `p = i mod P`,
   half `on` when `2p < P`, else `off`, weight
   `a = peak · (0.5 − 0.5 · cos(2πp / P))`, and image `floor(k / c) mod nI`.
+- **Shared peak:** let `rOn[k]` be the onset random array, and `T = target(src, R[k+1], rOn[k])`. For `peak < 1`, define `Q = antisymmetric(wrap(peak·src + (1−peak)·T))`; for `peak = 1`, `Q = src`. Build both onset and offset targets from `Q`, using the existing onset and offset random arrays. Render each half as `riseFrame(amp, Q, halfTarget, a/peak)`. Both halves therefore meet at exactly the same phase at the peak. Simply capping two independently scrambled paths does not meet this requirement. An odd frame period samples either side of the continuous apex; its sampled maximum is less than `peak`.
 - Noise end-points `R[0]` to `R[K + 2]`: the baseline drifts from `R[0]` to `R[1]`
-  with `w = n / nb`; cycle `k` uses the target from its image to `R[k + 1]` while
+  with `w = n / nb`; cycle `k` uses the target from its shared peak phase `Q` to `R[k + 1]` while
   `on` and to `R[k + 2]` while `off`; the post period drifts from `R[K + 1]` to
   `R[K + 2]` with `w = (j + 1) / npost`. Consecutive frames therefore join without
   jumps, and every cycle starts and ends in noise that does not depend on the
@@ -218,7 +219,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
 | Cycles per image | 1 | paper (a new expression every eye cycle) |
 | Baseline, stimulus, post | 1.0 s, 4.5 s, 0.5 s | paper |
 | Frame rate | 60 frames/s | inferred from the published clip |
-| Peak weight | 1 | assumption, supported by the clip |
+| Peak weight | 0.85 | project choice to retain residual phase noise; not a published estimate |
 | New noise end-point per half cycle | yes | inferred from the clip |
 | RISE target | circular | this project (see *RISE*) |
 | Normalisation | off | assumption |
@@ -258,7 +259,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
   examples: the 15 synthetic faces in `public/examples/` and, for One image only,
   two chessboards. Uploads never leave the device.
 - **One image:** weight slider (0–1), *Play* (one emerge–dissolve cycle per
-  second, looping), *New noise*, a method choice (*RISE*, *Sign rule*, *Plain
+  second, looping, maximum weight 0.85), *New noise*, a method choice (*RISE*, *Sign rule*, *Plain
   interpolation*), an outline toggle (default ellipse), and readouts of the
   mean and RMS contrast.
 - **Sequence:** an ordered image list (add from the gallery or uploads, remove,
@@ -271,7 +272,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
   multiple of the sequence's frame rate. The preview is for viewing, not for
   experiments.
 - **Safety:** nothing plays until the visitor presses *Play*. With the defaults
-  the content changes at 2 Hz, without luminance flicker; the page notes that
+  the content changes at 2 Hz, without deliberate global luminance modulation; pixel mapping and display calibration still matter. The page notes that
   higher tag rates are possible and that visitors sensitive to flicker should
   keep to low rates.
 
@@ -293,7 +294,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
   frames are lent to it (transferred) and handed back.
 - `parameters.json` uses snake_case keys: app, version, url, created, seed,
   method, frame rate, tag frequency, period, cycles, cycles per image, the three
-  durations and frame counts, peak weight and its formula, image size, outline,
+  durations and frame counts, peak weight, actual sampled peak, shared-peak phase-path description and envelope formula, image size, outline,
   spectrum matching, normalisation, fixation cross, display mapping, clipped
   share, image names, and the measured ranges.
 - The download section states that lossy video changes pixel values and can undo
@@ -308,7 +309,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
   its files, shapes and tolerances (FFT at 400 × 400, 45 × 60 and 13 × 17; RISE
   frames at 200 × 200 for the sign rule, plain interpolation and the circular
   target; spectrum matching; the noise path; the paper's default schedule; a
-  full 64 × 64 sequence with its uniform arrays, frames and schedule). The mask
+  full 64 × 64 sequence with its uniform arrays, frames and schedule). In 1.1 only this sequence fixture’s output was regenerated for the shared-peak correction, retaining its original inputs, random arrays and tolerances. The mask
   frames of `noise_and_mask_64` belong to the compound stimulus and are not
   ported. `npm run check` fails when a case is outside its tolerance.
 - **Properties** (`npm run check`), on rendered sequences:
@@ -316,7 +317,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
     (relative difference below 1e-9 before the display mapping; within the
     rounding bounds after it);
   - the similarity to the source rises to 1 at every peak of weight 1, is
-    noise-like at every minimum, and its spectrum peaks at the tag frequency;
+    noise-like at every minimum, and its spectrum peaks at the tag frequency for the tested demo. At the default partial peak, similarity stays below 1 and background texture remains. These image correlations are not perceptual recognition scores;
   - frames join without jumps at cycle and segment boundaries;
   - with the circular target, no position-specific artefact: corner pixels stay
     within the range of the other pixels at every weight; the sign rule is
@@ -341,16 +342,13 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
   plain, precise, restrained, no contractions, no hype.
 - Public text follows the claim rules in
   `docs-dev/reference/secondary_background/explainer_texts.md`. Overall
-  brightness, contrast and amount of detail are constant, not every region: the
-  contrast of a region changes as the image emerges (about 7–10 % for 160-row
-  bands of the demo faces). The pixels change continuously. Make no claim that
+  pixel mean, contrast and Fourier amplitudes are constant before rounding and clipping. Local statistics and edges can change. Current corrections in `docs/scientific-audit.md` supersede the historical numerical claims in the background explainer. The pixels change continuously. Make no claim that
   the method proves face-specific or content-specific processing.
 - Built files never mention `docs-dev` (the public-build check refuses them).
 
 ## Privacy
 
-No network requests after load, no analytics, no cookies, no third-party
-requests. Images are processed in the browser and never stored or sent.
+No analytics, cookies or third-party requests. Interactive image processing remains local. The original study video is streamed from the same website’s blog media URL only when played (`preload="none"`, no autoplay); following source or blog links navigates normally. Images are processed in the browser and never stored or sent.
 `localStorage` may keep interface preferences only.
 
 ## Hosting and deploy

@@ -61,8 +61,8 @@ export class RiseWorker {
     return this.call({ type: 'frame', a });
   }
 
-  cycle(n: number): Promise<FrameResult[]> {
-    return this.call({ type: 'cycle', n });
+  cycle(n: number, peak: number): Promise<FrameResult[]> {
+    return this.call({ type: 'cycle', n, peak });
   }
 
   /**

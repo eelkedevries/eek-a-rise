@@ -75,12 +75,28 @@ See `docs-dev/plan.md` (decisions table) and the specification. In short:
 SiteGround deploy via the eelkedevries.com repository as for eek-a-look; Vite +
 TypeScript; own FFT checked against golden data; everything in the browser.
 
+## Scientific audit and textured demonstration (014; 2026-11-04)
+
+- Version 1.1.0 / specification 1.1: default peak 0.85 retains phase noise at
+  maximum visibility. One image playback uses the same ceiling; the slider still
+  reaches 1 for source inspection. The old stored default migrates once.
+- Both sequence halves now meet at a shared peak phase, correcting the jump
+  previously exposed by partial peaks. The Python reference and only the affected
+  sequence golden output were updated; input arrays and tolerances were retained.
+- Normalisation sums non-DC energy directly and rejects uniform image sets;
+  exports describe the phase path and handle sampled peaks of odd frame periods.
+- Public claims were checked against primary papers and corrected. See
+  `docs/scientific-audit.md`; `audit_demo.py` independently measures all 360 frames
+  and regenerates the explanatory figure.
+- The original compound-stimulus video is embedded using the existing blog MP4,
+  with no autoplay/preload, its Figshare record and the relevant blog link.
+
 ## In progress / next
 
-**v1 is live** at <https://eelkedevries.com/eek-a-rise/> (version 1.0.0,
+**The v1 release was published** at <https://eelkedevries.com/eek-a-rise/> (version 1.0.0,
 specification 1.0). Next: prompt 013 (Projects card), only once the owner has
 confirmed it; the owner's review of the adapted explainer texts (sections 2–4)
-and of the circular target as the default.
+and of the circular target as the default. The scientific and example corrections requested on 2026-11-04 are recorded above; deployment verification is reported with the 014 commit.
 
 ## Prompts run
 
@@ -98,3 +114,5 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `010_downloads.md`
 - `011_how_it_works.md`
 - `012_about_docs_release.md`
+
+- `014_scientific_audit_and_scrambled_background.md`

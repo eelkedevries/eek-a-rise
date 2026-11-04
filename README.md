@@ -1,12 +1,13 @@
 # eek-a-rise
 
-*Images that emerge from noise: an in-browser implementation of the RISE stimuli of de Vries & Baldauf (2019), for whole images.*
+*Images that emerge from noise: a browser-based, whole-image adaptation of RISE, inspired by de Vries & Baldauf (2019).*
 
 ## What this is
 
 A web page at <https://eelkedevries.com/eek-a-rise/> that scrambles an image into
-noise and restores it again, while its overall brightness, contrast and amount of
-coarse and fine detail stay the same. It also builds frequency-tagged sequences of
+noise and restores phase structure, holding the global pixel mean, standard deviation
+and Fourier amplitude spectrum constant before 8-bit rounding and clipping. The
+default peak of 0.85 retains scrambled texture around the face throughout playback. It also builds frequency-tagged sequences of
 whole images, as in de Vries and Baldauf (2019): each image emerges from noise and
 dissolves into it at a fixed rate (2 Hz by default), ready to download as lossless
 frames or as video, with the measured statistics of every frame.
@@ -33,9 +34,10 @@ Everything runs in your browser. Images are never uploaded.
 
 The images fade by Random Image Structure Evolution (RISE; Sadr & Sinha, 2004):
 the Fourier phase is interpolated towards a random phase while the amplitude
-spectrum is kept. The implementation follows the paper's Methods, for whole
-images only; parameters the paper does not report were inferred from the
-published example clip and are marked as such on the page. Each phase travels
+spectrum is kept. This is a whole-image adaptation, with project choices distinguished from published
+parameters. The exact generation code and peak weight of the original study are
+not known from its Methods. Both halves of a cycle meet at one shared partially
+scrambled peak, avoiding a discontinuity when the peak weight is below 1. Each phase travels
 the shorter way round the circle, with one extra full turn in a random direction
 for a random half, which keeps RISE's late emergence without the bright and dark
 corners that interpolating raw phase values produces. `tools/reference/` holds a
@@ -66,6 +68,10 @@ npm run dev     # serve at http://localhost:5173/eek-a-rise/
 npm run check   # type check, tests, claim check, build and the repository checks
 npm run e2e     # end-to-end check of the built page in Chromium
 ```
+
+The original published video and its related blog post are linked and playable
+under How it works. Scientific sources, corrections and numerical definitions:
+[`docs/scientific-audit.md`](docs/scientific-audit.md).
 
 How to use the page, and how to present the frames in an experiment:
 `docs/usage.md`. What the checks show: `docs/validation.md`.

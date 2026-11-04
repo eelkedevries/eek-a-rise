@@ -30,6 +30,7 @@ F_EYES = 2.0
 F_MOUTH = 4.0 / 3.0     # reported as 1.33 Hz
 F_IDENTITY = 2.0 / 3.0  # reported as 0.66 Hz
 BASELINE_S, STIMULUS_S, POST_S = 1.0, 4.5, 0.5
+DEMO_PEAK = 0.85  # project choice: residual phase noise, not an estimate from the paper
 MASK_LOOP = 10          # ASSUMPTION: the clip's mask band repeats every 10 frames (6 Hz at 60 Hz)
 
 
@@ -260,7 +261,8 @@ def sequence_schedule(fps=FPS, f_tag=F_EYES, baseline_s=BASELINE_S, stimulus_s=S
     The single band of the paper's composite, applied to the whole image. The stimulus must hold a
     whole number of cycles, so it starts and ends in pure noise and joins the baseline and post
     noise without a jump. Cycle k shows image (k // cycles_per_image) % n_images; weight is the
-    interpolation weight actually applied (peak = 1 reaches the full image). With f_tag = 2 Hz,
+    scaled cycle envelope (rendering uses weight / peak towards a shared apex;
+    peak = 1 reaches the full image). With f_tag = 2 Hz,
     cycles_per_image = 3 and n_images = 3 the rows equal the eye columns of schedule().
     """
     nb, ns, npost = (whole_frames(s, fps) for s in (baseline_s, stimulus_s, post_s))
@@ -293,7 +295,11 @@ def normalise_amplitude(amp: np.ndarray, mean: float, rms: float) -> np.ndarray:
     """Amplitude spectrum with the given mean (DC) and RMS contrast (Parseval); one linear map for all frames."""
     out = amp.copy()
     n = amp.size
-    ac = np.sqrt(np.sum(amp ** 2) - amp[0, 0] ** 2)
+    if not (0 < mean < 1 and np.isfinite(rms) and rms > 0):
+        raise ValueError("choose a mean between 0 and 1 and a positive finite RMS contrast")
+    ac = np.sqrt(np.sum(amp.ravel()[1:] ** 2))
+    if ac <= np.finfo(float).eps * abs(amp[0, 0]):
+        raise ValueError("a uniform image has no contrast to scale")
     out *= rms * n / ac
     out[0, 0] = mean * n
     return out
@@ -314,7 +320,7 @@ class Sequence:
     stimulus_s: float = STIMULUS_S
     post_s: float = POST_S
     cycles_per_image: int = 1
-    peak: float = 1.0
+    peak: float = DEMO_PEAK
     normalise: tuple[float, float] | None = None   # (mean, rms) or None to keep the set's own
     method: str = "circular"                        # "circular" (default) or "sign" (rise_target)
 
@@ -325,6 +331,8 @@ class Sequence:
     def render(self, uniform) -> np.ndarray:
         rows = self.schedule()
         eq, amp = spec_match(self.images)
+        if not np.any(amp.ravel()[1:] > np.finfo(float).eps * abs(amp[0, 0])):
+            raise ValueError("uniform images cannot emerge from phase noise")
         if self.normalise is not None:
             amp = normalise_amplitude(amp, *self.normalise)
         src = [spectrum(im)[1] for im in eq]
@@ -333,8 +341,17 @@ class Sequence:
         image_of = {r["cycle"]: r["image"] for r in rows if r["cycle"] >= 0}
         target = TARGETS[self.method]
         R = [noise_phase(uniform(shape)) for _ in range(K + 3)]
-        t_on = [target(src[image_of[k]], R[k + 1], uniform(shape)) for k in range(K)]
-        t_off = [target(src[image_of[k]], R[k + 2], uniform(shape)) for k in range(K)]
+        r_on = [uniform(shape) for _ in range(K)]
+        peak_phase = []
+        t_on = []
+        for k in range(K):
+            phase = src[image_of[k]]
+            if self.peak != 1:
+                t = target(phase, R[k + 1], r_on[k])
+                phase = antisymmetric(wrap(self.peak * phase + (1 - self.peak) * t))
+            peak_phase.append(phase)
+            t_on.append(target(phase, R[k + 1], r_on[k]))
+        t_off = [target(peak_phase[k], R[k + 2], uniform(shape)) for k in range(K)]
         t_base = target(R[0], R[1], uniform(shape))
         t_post = target(R[K + 1], R[K + 2], uniform(shape))
         out = np.empty((len(rows),) + shape)
@@ -346,7 +363,7 @@ class Sequence:
                 out[f] = from_spectrum(amp, noise_path(R[K + 1], t_post, row["noise_w"]))
             else:
                 k = row["cycle"]
-                out[f] = rise_frame(amp, src[image_of[k]], t_on[k] if row["half"] == "on" else t_off[k], row["weight"])
+                out[f] = rise_frame(amp, peak_phase[k], t_on[k] if row["half"] == "on" else t_off[k], row["weight"] / self.peak)
         return out
 
 
