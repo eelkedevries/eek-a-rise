@@ -11,8 +11,8 @@ converted to grey (Rec. 601 luma), cropped to a centred square and shown at
 
 - **Weight** moves from noise (0) to the image (1).
 - **Play** runs one emerge–dissolve cycle per second, frames chosen by elapsed
-  time, with a maximum weight of 0.85 so scrambled texture remains at the peak.
-  Move the slider to 1 to inspect the fully restored source.
+  time, reaching weight 1. The public face examples already contain a phase-noise
+  surround, so full restoration retains background texture.
 - **New noise** draws a new random phase spectrum; its seed is shown.
 - **Method**: *RISE* (the default, see below), *Sign rule* (Sadr and Sinha's
   2π step read literally) or *Plain interpolation*. The last two brighten (and,
@@ -26,8 +26,9 @@ converted to grey (Rec. 601 luma), cropped to a centred square and shown at
 A sequence is: noise, then each image emerging from noise and dissolving into it
 once per cycle, then noise again. Every frame has the same amplitude spectrum,
 hence the same pixel mean and RMS contrast (population SD) before rounding and clipping.
-The 0.85 default retains residual phase noise at maximum visibility; setting 1
-restores the source, including any flat grey background. Both halves meet at
+The default peak of 1 restores the prepared source, including the phase-noise
+surround in the built-in face examples. This surround is prepared before RISE;
+it is not an overlay on the output. Both halves meet at
 one common peak phase, even when the peak is below 1.
 
 1. **Images, in order.** The nine eye-expression demo faces by default. Click a
@@ -45,7 +46,7 @@ one common peak phase, even when the peak is below 1.
    | Tag frequency | 2 Hz (30 frames) | paper (eye band) |
    | Cycles per image | 1 | paper (a new expression every eye cycle) |
    | Noise before, images, noise after | 1.0, 4.5, 0.5 s | paper |
-   | Peak weight | 0.85 (residual phase noise) | project choice; not a published estimate |
+   | Peak weight | 1 (prepared source, including the noise surround) | project choice; not a published estimate |
    | Method | RISE (circular target) | this project |
    | Mean and RMS contrast | the set's own | assumption |
    | Fixation cross | off | this project |

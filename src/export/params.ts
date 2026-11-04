@@ -52,7 +52,7 @@ export function parametersJson({ built, settings, imageNames, created }: ExportI
     sampled_peak_weight: sampledPeak,
     weight: 'peak * (0.5 - 0.5 * cos(2 * pi * p / period)), p = frame within the cycle',
     phase_path: 'one shared peak phase, made at peak_weight on the source-to-onset-noise path; both halves interpolate between this peak and their noise endpoint at weight / peak_weight',
-    peak_provenance: 'project parameter; 0.85 retains residual phase noise in the demonstration, not an estimate of the published stimulus',
+    peak_provenance: 'project parameter; 1 restores the prepared source, including the noise surround in the synthetic face examples; not an estimate of the published stimulus',
     image_size_px: settings.size,
     outline_ellipse: settings.outline ? { ...settings.ellipse, units: 'fractions of the image size' } : null,
     spectrum_matching: 'every image gets the set-average amplitude spectrum and keeps its own phase',

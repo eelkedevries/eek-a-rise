@@ -30,7 +30,7 @@ F_EYES = 2.0
 F_MOUTH = 4.0 / 3.0     # reported as 1.33 Hz
 F_IDENTITY = 2.0 / 3.0  # reported as 0.66 Hz
 BASELINE_S, STIMULUS_S, POST_S = 1.0, 4.5, 0.5
-DEMO_PEAK = 0.85  # project choice: residual phase noise, not an estimate from the paper
+DEMO_PEAK = 1.0  # prepared face examples already contain a phase-noise surround
 MASK_LOOP = 10          # ASSUMPTION: the clip's mask band repeats every 10 frames (6 Hz at 60 Hz)
 
 

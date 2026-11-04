@@ -91,6 +91,17 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 - The original compound-stimulus video is embedded using the existing blog MP4,
   with no autoplay/preload, its Figshare record and the relevant blog link.
 
+## Full-visibility surround correction (015; 2026-11-04)
+
+- Version 1.1.1 / specification 1.2 supersedes the 0.85 cap above: the user
+  correctly showed that slider weight 1 still restored a grey background.
+- The 15 public examples now embed their face in a deterministic phase-noise
+  surround, with a feathered boundary, before whole-image RISE. Raw reference
+  face files and golden data are unchanged. Playback and default peaks reach 1.
+- Image URLs carry the app version so old cached grey-background faces refresh.
+- Regression checks inspect the actual public examples at weight 1, over the
+  slider range and at every full-visibility sequence peak.
+
 ## In progress / next
 
 **The v1 release was published** at <https://eelkedevries.com/eek-a-rise/> (version 1.0.0,
@@ -116,3 +127,5 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `012_about_docs_release.md`
 
 - `014_scientific_audit_and_scrambled_background.md`
+
+- `015_textured_examples_at_full_visibility.md`

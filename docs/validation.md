@@ -31,21 +31,25 @@ demo face throughout every cycle. Separate checks approach the common apex
 from both directions, including periods with odd and even frame counts.
 
 The independent Python demo (`python tools/reference/audit_demo.py`) uses all
-360 frames at 400 × 400 px, nine committed faces and peak 0.85. Its random
+360 frames at 400 × 400 px, nine prepared public faces and peak 1. Its random
 stream differs from the browser's. Measured results:
 
 | Quantity | Result |
 |---|---|
-| Mean before display mapping | 0.6275837608932463–0.6275837608932465 |
-| SD before display mapping | 0.08189288958792865–0.08189288958792866 |
-| Maximum relative amplitude-spectrum error | 2.88e-16 |
-| Minimum background SD, across all frames | 0.0421 |
-| Source correlation at peaks | 0.682–0.825 |
-| 8-bit mean | 0.6275749–0.6275916 |
-| 8-bit SD | 0.0818924–0.0819082 |
-| Clipped pixel share | 6.42e-7 |
+| Mean before display mapping | 0.6503248720043572–0.6503248720043574 |
+| SD before display mapping | 0.09681002118174971–0.09681002118174974 |
+| Maximum relative amplitude-spectrum error | 3.17e-16 |
+| Minimum background SD, across all frames | 0.0706 |
+| Source correlation at peaks | 1.0 |
+| 8-bit mean | 0.6502614–0.6503327 |
+| 8-bit SD | 0.0965673–0.0968258 |
+| Clipped pixel share | 9.42e-5 |
 
-The full-restoration option (peak 1) is still checked against source similarity
+A regression check covers all 15 public face assets at weight 1 and across the
+slider range, plus full-restoration sequence peaks. The source itself includes
+a noise surround, so weight 1 retains texture without capping visibility.
+
+The full-restoration default (peak 1) is checked against source similarity
 above 0.99. With partial peaks, source similarity remains below 1. Neither
 threshold measures recognisability. Local image statistics need not remain
 constant. Similarity need not be monotonic for every seed or input.

@@ -7,7 +7,7 @@
 A web page at <https://eelkedevries.com/eek-a-rise/> that scrambles an image into
 noise and restores phase structure, holding the global pixel mean, standard deviation
 and Fourier amplitude spectrum constant before 8-bit rounding and clipping. The
-default peak of 0.85 retains scrambled texture around the face throughout playback. It also builds frequency-tagged sequences of
+face examples are prepared within a phase-noise surround, so their background stays textured even at weight 1. Playback reaches the full prepared source. It also builds frequency-tagged sequences of
 whole images, as in de Vries and Baldauf (2019): each image emerges from noise and
 dissolves into it at a fixed rate (2 Hz by default), ready to download as lossless
 frames or as video, with the measured statistics of every frame.

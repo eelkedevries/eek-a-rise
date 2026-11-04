@@ -14,7 +14,6 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from scipy import ndimage, stats
-from skimage import data
 
 import rise_reference as rr
 
@@ -135,6 +134,7 @@ def scramble(img, rng):
 
 
 def figures():
+    from skimage import data
     rng = np.random.default_rng(7)
     # RISE on a photograph: Sadr & Sinha target (top) against plain interpolation (bottom)
     img = rr.to_grey_square(data.chelsea())
@@ -230,7 +230,8 @@ def corner_z(frames):
 
 def sequence_and_checks():
     """The page's default: the nine eye images of the demo trial as whole faces, 2 Hz, one image per cycle."""
-    images = [draw_face(IDENTITIES[i], eyes=e) for i in range(3) for e in EYES[i]]
+    images = [np.asarray(Image.open(HERE.parent.parent / "public/examples/faces" / f"{IDENTITIES[i]['name']}_eyes_{e}.png"), float) / 255
+              for i in range(3) for e in EYES[i]]
     seq = rr.Sequence(images)
     fr = seq.render(np.random.default_rng(3).random)
     sign = rr.Sequence(images, method="sign").render(np.random.default_rng(3).random)
@@ -278,7 +279,9 @@ def sequence_and_checks():
 if __name__ == "__main__":
     for p in (FACES, OUT, FIG):
         p.mkdir(parents=True, exist_ok=True)
-    rep = {"similarity_to_source_by_weight": figures(), "demo_trial": trial_and_checks(),
-           "demo_sequence": sequence_and_checks()}
+    rep = {"similarity_to_source_by_weight": figures(), "demo_trial": trial_and_checks()}
+    from make_textured_examples import main as make_textured_examples
+    make_textured_examples()
+    rep["demo_sequence"] = sequence_and_checks()
     (OUT / "verification.json").write_text(json.dumps(rep, indent=2))
     print(json.dumps(rep, indent=2))

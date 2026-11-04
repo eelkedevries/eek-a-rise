@@ -1,6 +1,6 @@
 # Specification
 
-**Version:** 1.1 · **Last updated:** 2026-11-04
+**Version:** 1.2 · **Last updated:** 2026-11-04
 
 The authoritative design canon for this project. **Only filled sections are
 binding.** An empty or stubbed section means "not yet decided", not a
@@ -26,6 +26,8 @@ Changes:
   shortest-way phase interpolation.
 
 - 1.1 (owner’s requests of 2026-11-04): scientific audit; default peak 0.85 with a shared partially scrambled apex; stable contrast normalisation; original video and blog link. The peak is a project choice, not an estimate from the published clip.
+
+- 1.2 (owner’s screenshot correction, 2026-11-04): the 0.85 cap did not solve the grey surround at weight 1. Public synthetic faces are now prepared within a phase-noise surround before RISE. Playback and default sequences reach 1; the shared partial-peak algorithm remains available.
 
 ## Scope
 
@@ -159,8 +161,7 @@ size S × S (400 × 400 by default).
 - **Outline (optional):** an ellipse, by default centred at (0.5 S, 0.5375 S)
   with radii (0.3125 S, 0.455 S) (at 400 px: centre (200, 215), radii (125, 182)),
   adjustable. Outside it, every pixel is set to the mean luminance inside it.
-  Off by default for the sequence (the demo faces are already on a mean
-  background).
+  Off by default for the sequence. Public face examples are prepared in a phase-noise surround. The optional mean-grey outline deliberately replaces that surround if selected.
 - **Spectrum matching:** every image of a sequence receives the mean amplitude
   spectrum of the set and keeps its own phase (`specMatch`). This equates
   pixel mean and RMS contrast exactly before display mapping. It implements the spectrum-matching principle, not the full SHINE pipeline: histogram matching and SHINE's 0–255 clipping are not reproduced.
@@ -168,6 +169,10 @@ size S × S (400 × 400 by default).
   term to `mean · S²` and scales every other amplitude so that the RMS contrast
   (population standard deviation) is `rms`. It is one linear map for every frame,
   so all invariants hold. Non-DC energy is summed directly to avoid subtractive cancellation; a zero-contrast spectrum cannot be scaled to positive contrast and is rejected. Uniform input sets are rejected before sequence rendering. Off by default (the set's own mean and contrast).
+
+### Public face example preparation
+
+`tools/reference/make_textured_examples.py` reads the original synthetic mean-grey faces in `tools/reference/demo-faces/`, builds a noise field from their mean Fourier amplitude spectrum and deterministic random phase (seed 20191001), and prepares `public/examples/faces/`. The noise pattern is shared across expressions; its mean follows the interior face mean and its SD follows the raw image SD. The synthetic ellipse is centred at (200, 215), vertical radius 182, horizontal radius 130/118/112 for Ida/Ben/Cas. A raised-cosine blend over normalised radii 0.9–1 softens the boundary; outside it the source is noise. This is an illustrative preparation step, not a recovered detail of the published experiment. RISE then acts on the entire prepared source with fixed amplitudes; no noise overlay is applied after rendering. Browser asset URLs include the app version to invalidate cached grey-background examples.
 
 ### Sequence schedule (`schedule`)
 
@@ -219,7 +224,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
 | Cycles per image | 1 | paper (a new expression every eye cycle) |
 | Baseline, stimulus, post | 1.0 s, 4.5 s, 0.5 s | paper |
 | Frame rate | 60 frames/s | inferred from the published clip |
-| Peak weight | 0.85 | project choice to retain residual phase noise; not a published estimate |
+| Peak weight | 1 | reaches the prepared source; public face examples contain a phase-noise surround |
 | New noise end-point per half cycle | yes | inferred from the clip |
 | RISE target | circular | this project (see *RISE*) |
 | Normalisation | off | assumption |
@@ -259,7 +264,7 @@ image `c ≥ 1`, the number of images `nI`, and the peak weight `peak` in (0, 1]
   examples: the 15 synthetic faces in `public/examples/` and, for One image only,
   two chessboards. Uploads never leave the device.
 - **One image:** weight slider (0–1), *Play* (one emerge–dissolve cycle per
-  second, looping, maximum weight 0.85), *New noise*, a method choice (*RISE*, *Sign rule*, *Plain
+  second, looping, maximum weight 1), *New noise*, a method choice (*RISE*, *Sign rule*, *Plain
   interpolation*), an outline toggle (default ellipse), and readouts of the
   mean and RMS contrast.
 - **Sequence:** an ordered image list (add from the gallery or uploads, remove,

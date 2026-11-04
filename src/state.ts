@@ -72,7 +72,7 @@ export async function loadExamples(): Promise<void> {
   const manifest: ManifestEntry[] = await response.json();
   const names: Record<string, string> = { ida: 'Ida', ben: 'Ben', cas: 'Cas' };
   for (const entry of manifest) {
-    const url = `${BASE}examples/faces/${entry.file}`;
+    const url = `${BASE}examples/faces/${entry.file}?v=${__APP_VERSION__}`;
     items.push({
       id: entry.file.replace(/\.png$/, ''),
       label: entry.label,
@@ -172,9 +172,9 @@ export function loadSettings(): SequenceSettings {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
-      // Move the previous default to the textured demonstration once; keep
-      // custom partial peaks and subsequent deliberate choices of weight 1.
-      if (saved.defaultsVersion !== 2 && saved.peak === 1) saved.peak = DEMO_PEAK;
+      // Remove the previous release's default cap once. Other partial peaks
+      // and deliberate later choices remain user preferences.
+      if (saved.defaultsVersion !== 3 && saved.peak === 0.85) saved.peak = DEMO_PEAK;
       return { ...DEFAULT_SETTINGS, ...saved, ellipse: { ...DEFAULT_ELLIPSE, ...saved.ellipse } };
     }
   } catch {
@@ -185,7 +185,7 @@ export function loadSettings(): SequenceSettings {
 
 export function saveSettings(settings: SequenceSettings): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...settings, defaultsVersion: 2 }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...settings, defaultsVersion: 3 }));
   } catch {
     // Preferences are a convenience; nothing depends on them being kept.
   }

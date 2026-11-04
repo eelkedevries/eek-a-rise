@@ -1,6 +1,6 @@
 # Scientific audit: RISE and the continuously scrambled demonstration
 
-Checked on 4 November 2026. Applies to eek-a-rise 1.1.0 and specification 1.1.
+Checked on 4 November 2026. Applies to eek-a-rise 1.1.1 and specification 1.2.
 
 ## Sources checked
 
@@ -19,14 +19,19 @@ and separately modulated eye and mouth bands. The reported rates are 2.00 Hz
 for eyes, 1.33 Hz for the mouth, and 0.66 Hz for identity; trial segments last
 1.0, 4.5 and 0.5 s. The Methods describe sinusoidal modulation but do not give
 the exact phase trajectory or its peak weight. Whole-image generation, the
-circular target with extra turns, and peak 0.85 are therefore labelled as
-adaptations, rather than exact reproduction of the study.
+circular target with extra turns, and noise-surround preparation of the
+synthetic examples are therefore labelled as adaptations, rather than exact
+reproduction of the study.
 
-The grey background was caused by restoring the source completely at each
-playback peak. The demonstration now stops at a partially scrambled source,
-retaining texture throughout the frame. Weight 1 remains available for
-inspecting the source. The numerical value 0.85 is a demonstration choice,
-not a recovered experimental parameter or 85% perceptual visibility.
+The grey background came from the original example inputs. Version 1.1.0
+capped playback at 0.85 but still restored a grey surround at slider weight 1;
+that did not meet the requested appearance. Version 1.1.1 prepares the public
+synthetic faces within a phase-noise surround, with a soft transition at the
+face boundary, before whole-image RISE. Weight 1 now restores this prepared
+face and its textured surround. Both playback and default sequences reach 1.
+The original raw face images remain unchanged as reference inputs. This
+preparation is an illustrative adaptation, not a claimed step of the study;
+no background overlay is added after rendering or measurement.
 
 Merely lowering the previous peak setting exposed another error: onset and
 offset used independently scrambled frames, which only meet when weight is 1.
@@ -79,17 +84,21 @@ round trip, and metadata for odd frame periods. Only the affected
 `sequence_64_frames.float64` fixture was regenerated; its existing inputs,
 random arrays and 1e-9 tolerance were retained.
 
-An independent NumPy run of all 360 default frames with the committed demo
-images found relative amplitude-spectrum error below 3e-16, constant
-floating-point mean and SD to numerical precision, and minimum background SD
-0.0421. Peak source correlations ranged from 0.682 to 0.825. These are numerical
-properties of this demo, not human recognition results. Reproduce the check
-and the updated figure with `python tools/reference/audit_demo.py`.
+An independent NumPy run of all 360 current default frames, using the prepared
+public examples and peak 1, found relative amplitude-spectrum error below
+3.2e-16, constant floating-point mean and SD to numerical precision, and
+minimum background SD 0.0706 across all frames. At each peak the source
+correlation is 1, while the surround remains textured. All 15 prepared inputs
+have surround SD above 0.0805 at weight 1. These are numerical properties,
+not human recognition results. Reproduce the check and updated figure with
+`python tools/reference/make_textured_examples.py` followed by
+`python tools/reference/audit_demo.py`. Golden fixture outputs were not changed
+for this source-asset correction.
 
-The 360-frame PNG ZIP exported by the TypeScript core also passed the independent
-Python verifier: mean 0.627576–0.627591, SD 0.081892–0.081909, maximum
-relative amplitude-spectrum deviation 0.00127 after quantisation, and a
-content-correlation spectral peak at 2.001 Hz for the requested 2 Hz.
+The current 360-frame TypeScript PNG export passed the independent Python
+verifier: mean 0.650298–0.650332, SD 0.096710–0.096823, maximum relative
+amplitude-spectrum deviation 0.00188 after quantisation, and a content peak
+at 1.995 Hz for the requested 2 Hz.
 
 The embedded example uses the MP4 already hosted with the blog, with native
 controls, no autoplay and no preload. Its sequence contains 360 frames encoded

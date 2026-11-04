@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildSequence, peakFrequency, type BuildOptions } from '../../src/core/build';
 import { uniformArrays } from '../../src/core/prng';
-import { DEMO_PEAK, meanAmplitude } from '../../src/core/rise';
+import { meanAmplitude } from '../../src/core/rise';
 import { renderSequence, uniformCount } from '../../src/core/sequence';
 import { spectrum } from '../../src/core/spectrum';
 import { correlation, mean, rms } from '../../src/core/stats';
@@ -119,7 +119,8 @@ describe('reproducibility', () => {
 });
 
 describe('residual-noise demonstration', () => {
-  const partial = { ...options, params: { ...options.params, peak: DEMO_PEAK } };
+  const peak = 0.85;
+  const partial = { ...options, params: { ...options.params, peak } };
 
   it('retains texture outside the face throughout every cycle and preserves global statistics', () => {
     const amp = meanAmplitude(images, SIZE, SIZE);
@@ -132,7 +133,7 @@ describe('residual-noise demonstration', () => {
       // Left and right strips lie outside all three synthetic face outlines.
       const outside = frame.filter((_, i) => i % SIZE < 8 || i % SIZE >= SIZE - 8);
       expect(rms(outside), `background at frame ${row.frame}`).toBeGreaterThan(0.01);
-      if (row.weight === DEMO_PEAK) {
+      if (row.weight === peak) {
         expect(correlation(frame, source)).toBeGreaterThan(0.5);
         expect(correlation(frame, source)).toBeLessThan(0.99);
         const measured = spectrum(frame, SIZE, SIZE).amplitude;

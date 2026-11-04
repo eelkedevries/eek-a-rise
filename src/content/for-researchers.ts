@@ -17,7 +17,7 @@ export const inferredIntro =
 export const inferred = [
   '60 frames/s, inferred from the published clip’s frame sequence and the reported experimental rates;',
   'a raised-cosine envelope, consistent with the reported sinusoidal modulation but not a measured visibility function;',
-  'peak weight 0.85, chosen here to retain scrambled texture at maximum visibility; this is not an estimate of the paper’s peak weight;',
+  'peak weight 1, restoring the prepared source. The synthetic examples are embedded in a phase-noise surround before whole-image RISE, with a soft transition at the face boundary. This example preparation is a project adaptation, not a recovered step of the paper;',
   'one shared partially scrambled peak for both halves of a cycle, with different noise end-points before and after it. The two paths meet continuously, including when the peak is below 1.',
 ];
 
@@ -29,7 +29,7 @@ export const demoFigure = {
   width: 2000,
   height: 600,
   alt: 'Thirty frames of the default sequence in three rows: three faces, each emerging from noise and dissolving into it.',
-  caption: 'The first 1.5 s after the baseline (1.0–2.5 s), every third frame. The default peak weight of 0.85 leaves phase noise visible around each face even at the peak.',
+  caption: 'The first 1.5 s after the baseline (1.0–2.5 s), every third frame. Each face reaches full visibility at weight 1 while the prepared noise surround remains textured.',
 };
 
 export const publishedClip =

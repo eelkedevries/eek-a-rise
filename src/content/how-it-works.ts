@@ -3,7 +3,7 @@
 export const title = 'Faces from noise';
 
 export const intro = [
-  'A face that suddenly appears also introduces an abrupt visual change. To reduce this onset transient, the stimuli on this page gradually emerge from an already visible scrambled pattern and then dissolve back into it. The default demonstration retains some phase noise even when the face is most visible, so the surrounding pattern never becomes a flat grey field.',
+  'A face that suddenly appears also introduces an abrupt visual change. To reduce this onset transient, the stimuli on this page gradually emerge from an already visible scrambled pattern and then dissolve back into it. The example faces are prepared within a phase-noise surround, so restoring the face fully at weight 1 also restores the surrounding texture.',
   'Images are first converted to greyscale. In Sequence mode, their Fourier amplitude spectra are matched, controlling whole-image brightness, contrast and the distribution of coarse and fine structure. An algorithm then scrambles the phase, changing where that structure appears. A chessboard on a grey background loses its arrangement of squares when scrambled, while retaining its Fourier amplitude spectrum. This does not preserve its exact numbers of dark and light pixels.',
 ];
 

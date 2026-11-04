@@ -1,4 +1,4 @@
-"""Measure the residual-noise demo and regenerate its explanatory figure.
+"""Measure the textured-surround demo and regenerate its explanatory figure.
 
 Uses the committed, quantised demo images, NumPy FFTs and the Python reference.
 Writes only to the ignored out/ directory; copy the figure after reviewing it.
@@ -19,7 +19,7 @@ OUT = HERE / "out"
 
 def main():
     entries = json.loads((ROOT / "public/examples/manifest.json").read_text())
-    images = [np.asarray(Image.open(HERE / "demo-faces" / e["file"]), float) / 255
+    images = [np.asarray(Image.open(ROOT / "public/examples/faces" / e["file"]), float) / 255
               for e in entries if e["band"] == "eyes"]
     sequence = rr.Sequence(images, peak=rr.DEMO_PEAK)
     frames = sequence.render(np.random.default_rng(1).random)
@@ -48,7 +48,7 @@ def main():
     }
     assert max(spectra) < 1e-9
     assert report["background_min_sd"] > 0.01
-    assert min(peak_sim) > 0.5 and max(peak_sim) < 0.99
+    assert min(peak_sim) > 0.99
     assert np.ptp(means) < 1e-10 and np.ptp(sds) < 1e-10
     OUT.mkdir(exist_ok=True)
     sheet = Image.new("RGB", (2000, 600), "white")

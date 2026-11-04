@@ -7,8 +7,8 @@ import { antisymmetric, fromSpectrum, layout, spectrum } from './spectrum';
 
 const TWO_PI = 2 * Math.PI;
 
-/** Demonstration choice: retain phase noise even at maximum visibility. Not a published estimate. */
-export const DEMO_PEAK = 0.85;
+/** Reach the prepared source; the face examples already contain a noise surround. */
+export const DEMO_PEAK = 1;
 
 /** Angle in [-pi, pi), written with floor so that every IEEE implementation agrees bit for bit. */
 export function wrap(x: number): number {
