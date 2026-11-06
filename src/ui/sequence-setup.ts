@@ -3,7 +3,7 @@ import { planSequence, type Plan } from '../core/plan';
 import { applyOutline, DEFAULT_ELLIPSE, prepareImage } from '../core/preprocess';
 import { schedule, type Row } from '../core/schedule';
 import { toUint8 } from '../core/stats';
-import { DEFAULT_SETTINGS, demoSequenceIds, itemById, loadSettings, onItemsChange, saveSettings, type ImageItem, type SequenceSettings } from '../state';
+import { characterSequenceIds, DEFAULT_SETTINGS, demoSequenceIds, itemById, loadSettings, onItemsChange, saveSettings, type ImageItem, type SequenceSettings } from '../state';
 import { drawGrey, randomSeed } from './draw';
 
 export interface SequenceSetup {
@@ -246,6 +246,13 @@ export function mountSequenceSetup(root: HTMLElement): SequenceSetup {
     changed();
   });
   $<HTMLButtonElement>('#seq-reset').addEventListener('click', () => api.resetImages());
+  $<HTMLButtonElement>('#seq-characters').addEventListener('click', () => {
+    ids = characterSequenceIds();
+    selected = ids[0] ?? null;
+    settings = { ...structuredClone(DEFAULT_SETTINGS), tagHz: 1, stimulusS: ids.length, normRms: 0.086 };
+    writeForm();
+    changed();
+  });
   $<HTMLButtonElement>('#seq-clear').addEventListener('click', () => {
     ids = [];
     selected = null;

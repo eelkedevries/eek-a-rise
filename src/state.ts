@@ -27,6 +27,7 @@ interface ManifestEntry {
 }
 
 const BASE = import.meta.env.BASE_URL;
+export const CHARACTER_GROUP = 'Characters';
 const items: ImageItem[] = [];
 const listeners = new Set<() => void>();
 let uploads = 0;
@@ -98,6 +99,37 @@ export async function loadExamples(): Promise<void> {
     });
   }
   changed();
+}
+
+/** The deployment supplies the prepared portraits and preview alongside the app. */
+export async function loadCharacterExamples(): Promise<string | null> {
+  const base = `${BASE}examples/characters/`;
+  const response = await fetch(`${base}manifest.json`, { cache: 'no-cache' });
+  if (!response.ok) return null;
+  const manifest: {
+    images: { file: string; label: string }[];
+    version?: string;
+    video?: string;
+  } = await response.json();
+  if (!manifest.images.length || !manifest.video) return null;
+  const assetUrl = (file: string) => `${base}${file}?v=${encodeURIComponent(manifest.version ?? __APP_VERSION__)}`;
+  for (const { file, label } of manifest.images) {
+    const url = assetUrl(file);
+    items.push({
+      id: `character-${file.replace(/\.png$/, '')}`,
+      label,
+      group: CHARACTER_GROUP,
+      kind: 'face',
+      thumb: url,
+      load: async () => ({ kind: 'bitmap', bitmap: await bitmapFromUrl(url) }),
+    });
+  }
+  changed();
+  return assetUrl(manifest.video);
+}
+
+export function characterSequenceIds(): string[] {
+  return items.filter((item) => item.group === CHARACTER_GROUP).map((item) => item.id);
 }
 
 /** Decodes an uploaded file on this device and adds it to the gallery. */

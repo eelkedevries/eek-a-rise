@@ -493,6 +493,27 @@ input[type='radio'] {
 
 /* ---------------------------------------------------------------- sequence set-up */
 
+.character-demo {
+  margin-bottom: 18px;
+}
+
+.character-demo h3 {
+  margin-top: 0;
+}
+
+.character-demo summary {
+  margin: 12px 0 0;
+  cursor: pointer;
+}
+
+.character-demo video {
+  display: block;
+  width: min(100%, 400px);
+  height: auto;
+  margin-top: 10px;
+  border-radius: var(--radius);
+}
+
 .seq-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

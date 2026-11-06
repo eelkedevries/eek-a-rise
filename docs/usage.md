@@ -23,6 +23,11 @@ converted to grey (Rec. 601 luma), cropped to a centred square and shown at
 
 ## Sequence
 
+On the deployed site, choose *Load character sequence* to use the 21 prepared
+greyscale portraits at one reveal per second. Each reveal shows a different
+character from the previous one. Open *Watch the 22.5-second example* to see the
+pre-rendered sequence, or use *Build* to render and export the loaded preset.
+
 A sequence is: noise, then each image emerging from noise and dissolving into it
 once per cycle, then noise again. Every frame has the same amplitude spectrum,
 hence the same pixel mean and RMS contrast (population SD) before rounding and clipping.

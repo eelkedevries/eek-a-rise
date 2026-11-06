@@ -102,6 +102,13 @@ TypeScript; own FFT checked against golden data; everything in the browser.
 - Regression checks inspect the actual public examples at weight 1, over the
   slider range and at every full-visibility sequence peak.
 
+## Character sequence (016; 2026-11-06)
+
+- Version 1.2.0 / specification 1.3 adds a character gallery, a 21-reveal
+  Sequence preset and its 22.5 s preview.
+- The website deployment supplies the prepared portraits, manifest and MP4.
+  A standalone build uses the synthetic examples.
+
 ## In progress / next
 
 **The v1 release was published** at <https://eelkedevries.com/eek-a-rise/> (version 1.0.0,
@@ -129,3 +136,4 @@ _A running list of completed prompts, newest last. Add the prompt filename as ea
 - `014_scientific_audit_and_scrambled_background.md`
 
 - `015_textured_examples_at_full_visibility.md`
+- `016_character_stimuli.md`

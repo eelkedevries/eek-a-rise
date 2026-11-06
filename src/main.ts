@@ -9,7 +9,7 @@ import './style.css';
 import { linkTags, renderAbout, renderHowItWorks } from './content/render';
 import { acceptDrops, ImageInputError } from './image-input';
 import { mountDownloads } from './ui/downloads';
-import { addUpload, allItems, loadExamples, type ImageItem } from './state';
+import { addUpload, allItems, loadCharacterExamples, loadExamples, type ImageItem } from './state';
 import { mountGallery, type Gallery } from './ui/gallery';
 import { mountOneImage } from './ui/one-image';
 import { mountSequencePlayer } from './ui/sequence-player';
@@ -95,3 +95,14 @@ loadExamples()
     void oneImage.show(first);
   })
   .catch(() => status('The examples could not be loaded.', true));
+
+loadCharacterExamples()
+  .then((url) => {
+    if (!url) return;
+    const demo = document.querySelector<HTMLElement>('#character-demo')!;
+    demo.querySelector('video')!.src = url;
+    demo.hidden = false;
+  })
+  .catch(() => {
+    // The character media are optional in standalone builds.
+  });

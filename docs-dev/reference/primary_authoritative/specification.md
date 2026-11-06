@@ -1,6 +1,6 @@
 # Specification
 
-**Version:** 1.2 · **Last updated:** 2026-11-04
+**Version:** 1.3 · **Last updated:** 2026-11-06
 
 The authoritative design canon for this project. **Only filled sections are
 binding.** An empty or stubbed section means "not yet decided", not a
@@ -28,6 +28,8 @@ Changes:
 - 1.1 (owner’s requests of 2026-11-04): scientific audit; default peak 0.85 with a shared partially scrambled apex; stable contrast normalisation; original video and blog link. The peak is a project choice, not an estimate from the published clip.
 
 - 1.2 (owner’s screenshot correction, 2026-11-04): the 0.85 cap did not solve the grey surround at weight 1. Public synthetic faces are now prepared within a phase-noise surround before RISE. Playback and default sequences reach 1; the shared partial-peak algorithm remains available.
+
+- 1.3 (2026-11-06): the deployed site offers a character gallery and a 21-reveal preset. The prepared character media are supplied by the website repository at deployment.
 
 ## Scope
 
@@ -173,6 +175,13 @@ size S × S (400 × 400 by default).
 ### Public face example preparation
 
 `tools/reference/make_textured_examples.py` reads the original synthetic mean-grey faces in `tools/reference/demo-faces/`, builds a noise field from their mean Fourier amplitude spectrum and deterministic random phase (seed 20191001), and prepares `public/examples/faces/`. The noise pattern is shared across expressions; its mean follows the interior face mean and its SD follows the raw image SD. The synthetic ellipse is centred at (200, 215), vertical radius 182, horizontal radius 130/118/112 for Ida/Ben/Cas. A raised-cosine blend over normalised radii 0.9–1 softens the boundary; outside it the source is noise. This is an illustrative preparation step, not a recovered detail of the published experiment. RISE then acts on the entire prepared source with fixed amplitudes; no noise overlay is applied after rendering. Browser asset URLs include the app version to invalidate cached grey-background examples.
+
+The deployed character examples use 21 prepared 400 × 400 px greyscale portraits
+with a phase-noise surround. Preparation alternates histogram and spectrum
+matching, with spectrum matching last. The ordered manifest and preview MP4
+are supplied with the portraits at deployment. The optional preset uses the
+circular target, weight 1, 60 frames/s, one reveal per second, 1 s of initial
+noise, 0.5 s of final noise and seed 1. The synthetic examples are the defaults.
 
 ### Sequence schedule (`schedule`)
 

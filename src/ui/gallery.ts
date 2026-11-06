@@ -1,4 +1,4 @@
-import { allItems, onItemsChange, type ImageItem } from '../state';
+import { allItems, CHARACTER_GROUP, onItemsChange, type ImageItem } from '../state';
 
 export interface GalleryOptions {
   includeChessboards: boolean;
@@ -10,7 +10,7 @@ export interface Gallery {
   selected(): string | null;
 }
 
-const GROUP_ORDER = ['Your images', 'Ida', 'Ben', 'Cas', 'Chessboards'];
+const GROUP_ORDER = ['Your images', CHARACTER_GROUP, 'Ida', 'Ben', 'Cas', 'Chessboards'];
 
 /** Thumbnails grouped by identity, the visitor's uploads first; the selected item is highlighted. */
 export function mountGallery(container: HTMLElement, options: GalleryOptions): Gallery {
@@ -35,6 +35,7 @@ export function mountGallery(container: HTMLElement, options: GalleryOptions): G
           button.dataset.id = item.id;
           button.setAttribute('aria-pressed', String(item.id === selectedId));
           const img = document.createElement('img');
+          if (group === CHARACTER_GROUP) img.loading = 'lazy';
           img.src = item.thumb;
           img.alt = item.label;
           img.width = img.height = 72;
